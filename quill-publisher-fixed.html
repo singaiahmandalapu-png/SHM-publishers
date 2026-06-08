@@ -1,0 +1,2996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUILL — Graphic Novel Publishing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#0a0a0a;
+    --paper:#f5f0e8;
+    --crimson:#c0272d;
+    --gold:#c8973a;
+    --muted:#6b6458;
+    --panel:#1a1612;
+    --nav-bg:rgba(10,10,10,0.92);
+    --grid-line:rgba(200,151,58,0.06);
+    --step-hover:rgba(200,151,58,0.05);
+    --why-card-text:rgba(245,240,232,0.6);
+    --step-text:rgba(245,240,232,0.65);
+    --hero-sub:rgba(245,240,232,0.7);
+    --input-bg:rgba(245,240,232,0.05);
+    --input-focus:rgba(200,151,58,0.07);
+    --placeholder:rgba(245,240,232,0.3);
+    --label-color:rgba(245,240,232,0.5);
+    --form-note:rgba(245,240,232,0.4);
+    --footer-p:rgba(245,240,232,0.5);
+    --footer-link:rgba(245,240,232,0.55);
+    --footer-bottom:rgba(245,240,232,0.25);
+    --char-count:rgba(245,240,232,0.35);
+    --pricing-desc:rgba(245,240,232,0.65);
+    --feature-li:rgba(245,240,232,0.8);
+    --submit-info-p:rgba(245,240,232,0.65);
+    --req-ul:rgba(245,240,232,0.7);
+    --success-p:rgba(245,240,232,0.7);
+    --setup-banner-text:rgba(245,240,232,0.7);
+    --price-sub:rgba(245,240,232,0.5);
+    --testimonial-bg:linear-gradient(180deg,var(--ink) 0%,#0f0c08 100%);
+  }
+  [data-theme="light"]{
+    --ink:#faf7f2;
+    --paper:#1a1510;
+    --crimson:#b02028;
+    --gold:#a87a28;
+    --muted:#7a6e60;
+    --panel:#ede8df;
+    --nav-bg:rgba(250,247,242,0.94);
+    --grid-line:rgba(168,122,40,0.07);
+    --step-hover:rgba(168,122,40,0.06);
+    --why-card-text:rgba(26,21,16,0.62);
+    --step-text:rgba(26,21,16,0.62);
+    --hero-sub:rgba(26,21,16,0.68);
+    --input-bg:rgba(26,21,16,0.05);
+    --input-focus:rgba(168,122,40,0.09);
+    --placeholder:rgba(26,21,16,0.3);
+    --label-color:rgba(26,21,16,0.5);
+    --form-note:rgba(26,21,16,0.45);
+    --footer-p:rgba(26,21,16,0.55);
+    --footer-link:rgba(26,21,16,0.6);
+    --footer-bottom:rgba(26,21,16,0.3);
+    --char-count:rgba(26,21,16,0.38);
+    --pricing-desc:rgba(26,21,16,0.65);
+    --feature-li:rgba(26,21,16,0.82);
+    --submit-info-p:rgba(26,21,16,0.65);
+    --req-ul:rgba(26,21,16,0.72);
+    --success-p:rgba(26,21,16,0.7);
+    --setup-banner-text:rgba(26,21,16,0.72);
+    --price-sub:rgba(26,21,16,0.5);
+    --testimonial-bg:linear-gradient(180deg,var(--ink) 0%,#e8e0d5 100%);
+  }
+  [data-theme="blue"]{
+    --ink:#041a2f;
+    --paper:#e9f3ff;
+    --crimson:#5b8ff2;
+    --gold:#80b4ff;
+    --muted:#9ebfd7;
+    --panel:#0d2647;
+    --nav-bg:rgba(4,18,40,0.92);
+    --grid-line:rgba(128,180,255,0.08);
+    --step-hover:rgba(128,180,255,0.06);
+    --why-card-text:rgba(233,243,255,0.66);
+    --step-text:rgba(233,243,255,0.72);
+    --hero-sub:rgba(233,243,255,0.78);
+    --input-bg:rgba(233,243,255,0.05);
+    --input-focus:rgba(128,180,255,0.1);
+    --placeholder:rgba(233,243,255,0.35);
+    --label-color:rgba(233,243,255,0.55);
+    --form-note:rgba(233,243,255,0.5);
+    --footer-p:rgba(233,243,255,0.55);
+    --footer-link:rgba(233,243,255,0.65);
+    --footer-bottom:rgba(233,243,255,0.3);
+    --char-count:rgba(233,243,255,0.38);
+    --pricing-desc:rgba(233,243,255,0.7);
+    --feature-li:rgba(233,243,255,0.82);
+    --submit-info-p:rgba(233,243,255,0.74);
+    --req-ul:rgba(233,243,255,0.72);
+    --success-p:rgba(233,243,255,0.75);
+    --setup-banner-text:rgba(233,243,255,0.7);
+    --price-sub:rgba(233,243,255,0.5);
+    --testimonial-bg:linear-gradient(180deg,var(--ink) 0%,#0a315f 100%);
+  }
+  [data-theme="green"]{
+    --ink:#0b160f;
+    --paper:#ecf6e8;
+    --crimson:#1f5a34;
+    --gold:#5d9a69;
+    --muted:#8fa88b;
+    --panel:#142217;
+    --nav-bg:rgba(11,22,15,0.94);
+    --grid-line:rgba(93,154,105,0.07);
+    --step-hover:rgba(93,154,105,0.06);
+    --why-card-text:rgba(236,246,232,0.78);
+    --step-text:rgba(236,246,232,0.78);
+    --hero-sub:rgba(236,246,232,0.75);
+    --input-bg:rgba(236,246,232,0.06);
+    --input-focus:rgba(93,154,105,0.12);
+    --placeholder:rgba(236,246,232,0.4);
+    --label-color:rgba(236,246,232,0.62);
+    --form-note:rgba(236,246,232,0.55);
+    --footer-p:rgba(236,246,232,0.6);
+    --footer-link:rgba(236,246,232,0.68);
+    --footer-bottom:rgba(236,246,232,0.35);
+    --char-count:rgba(236,246,232,0.42);
+    --pricing-desc:rgba(236,246,232,0.76);
+    --feature-li:rgba(236,246,232,0.85);
+    --submit-info-p:rgba(236,246,232,0.78);
+    --req-ul:rgba(236,246,232,0.75);
+    --success-p:rgba(236,246,232,0.78);
+    --setup-banner-text:rgba(236,246,232,0.75);
+    --price-sub:rgba(236,246,232,0.55);
+    --testimonial-bg:linear-gradient(180deg,var(--ink) 0%,#0e2c1b 100%);
+  }
+  [data-theme="red"]{
+    --ink:#140a0b;
+    --paper:#f8e8e9;
+    --crimson:#bf1f26;
+    --gold:#d8676c;
+    --muted:#b8898d;
+    --panel:#2d1216;
+    --nav-bg:rgba(20,10,11,0.94);
+    --grid-line:rgba(216,103,108,0.08);
+    --step-hover:rgba(216,103,108,0.06);
+    --why-card-text:rgba(248,232,233,0.78);
+    --step-text:rgba(248,232,233,0.78);
+    --hero-sub:rgba(248,232,233,0.75);
+    --input-bg:rgba(248,232,233,0.06);
+    --input-focus:rgba(216,103,108,0.12);
+    --placeholder:rgba(248,232,233,0.4);
+    --label-color:rgba(248,232,233,0.62);
+    --form-note:rgba(248,232,233,0.55);
+    --footer-p:rgba(248,232,233,0.6);
+    --footer-link:rgba(248,232,233,0.68);
+    --footer-bottom:rgba(248,232,233,0.35);
+    --char-count:rgba(248,232,233,0.42);
+    --pricing-desc:rgba(248,232,233,0.76);
+    --feature-li:rgba(248,232,233,0.85);
+    --submit-info-p:rgba(248,232,233,0.78);
+    --req-ul:rgba(248,232,233,0.75);
+    --success-p:rgba(248,232,233,0.78);
+    --setup-banner-text:rgba(248,232,233,0.75);
+    --price-sub:rgba(248,232,233,0.55);
+    --testimonial-bg:linear-gradient(180deg,var(--ink) 0%,#3d1013 100%);
+  }
+  [data-theme="purple"]{
+    --ink:#120a1a;
+    --paper:#f0e9fb;
+    --crimson:#8e4fc7;
+    --gold:#b27ce2;
+    --muted:#ad9cc4;
+    --panel:#271537;
+    --nav-bg:rgba(18,10,26,0.94);
+    --grid-line:rgba(178,124,226,0.08);
+    --step-hover:rgba(178,124,226,0.06);
+    --why-card-text:rgba(240,233,251,0.78);
+    --step-text:rgba(240,233,251,0.78);
+    --hero-sub:rgba(240,233,251,0.75);
+    --input-bg:rgba(240,233,251,0.06);
+    --input-focus:rgba(178,124,226,0.12);
+    --placeholder:rgba(240,233,251,0.4);
+    --label-color:rgba(240,233,251,0.62);
+    --form-note:rgba(240,233,251,0.55);
+    --footer-p:rgba(240,233,251,0.6);
+    --footer-link:rgba(240,233,251,0.68);
+    --footer-bottom:rgba(240,233,251,0.35);
+    --char-count:rgba(240,233,251,0.42);
+    --pricing-desc:rgba(240,233,251,0.76);
+    --feature-li:rgba(240,233,251,0.85);
+    --submit-info-p:rgba(240,233,251,0.78);
+    --req-ul:rgba(240,233,251,0.75);
+    --success-p:rgba(240,233,251,0.78);
+    --setup-banner-text:rgba(240,233,251,0.75);
+    --price-sub:rgba(240,233,251,0.55);
+    --testimonial-bg:linear-gradient(180deg,var(--ink) 0%,#2d0f35 100%);
+  }
+  html{scroll-behavior:smooth}
+  body{background:var(--ink);color:var(--paper);font-family:'EB Garamond',Georgia,serif;overflow-x:hidden;transition:background 0.3s,color 0.3s}
+
+  /* ── NAV ── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1.2rem 3rem;
+    background:var(--nav-bg);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(200,151,58,0.25);
+    transition:background 0.3s;
+  }
+  .logo{
+    font-family:'Playfair Display',serif;
+    font-size:2rem;font-weight:900;letter-spacing:0.18em;
+    color:var(--gold);text-decoration:none;
+    background:transparent;border:none;cursor:pointer;padding:0;
+  }
+  .logo span{color:var(--crimson)}
+  nav ul{list-style:none;display:flex;gap:2.5rem;align-items:center}
+  nav a{
+    font-family:'Space Mono',monospace;font-size:0.72rem;
+    text-transform:uppercase;letter-spacing:0.14em;
+    color:var(--paper);text-decoration:none;opacity:0.75;
+    transition:opacity 0.2s,color 0.2s;
+  }
+  nav a:hover{opacity:1;color:var(--gold)}
+  .nav-cta{
+    background:var(--crimson);color:#fff !important;opacity:1 !important;
+    padding:0.5rem 1.2rem;border-radius:2px;
+    font-family:'Space Mono',monospace;font-size:0.72rem;
+    letter-spacing:0.14em;text-transform:uppercase;
+    border:none;cursor:pointer;
+    transition:background 0.2s !important;
+  }
+  .nav-cta:hover{background:#a01f24 !important}
+
+  /* ── HERO ── */
+  .hero{
+    min-height:100vh;display:flex;flex-direction:column;
+    justify-content:center;align-items:flex-start;
+    padding:8rem 3rem 4rem;
+    position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background:
+      repeating-linear-gradient(0deg,transparent,transparent 59px,var(--grid-line) 60px),
+      repeating-linear-gradient(90deg,transparent,transparent 59px,var(--grid-line) 60px);
+    pointer-events:none;
+  }
+  .hero-eyebrow{
+    font-family:'Space Mono',monospace;font-size:0.7rem;
+    letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--crimson);margin-bottom:1.5rem;
+    display:flex;align-items:center;gap:0.8rem;
+  }
+  .hero-eyebrow::before{content:'';display:block;width:2.5rem;height:1px;background:var(--crimson)}
+  .hero h1{
+    font-family:'Playfair Display',serif;font-weight:900;
+    font-size:clamp(3.5rem,8vw,7.5rem);line-height:0.95;
+    color:var(--paper);max-width:16ch;margin-bottom:0.5rem;
+  }
+  .hero h1 em{
+    font-style:italic;color:var(--gold);
+    display:block;
+  }
+  .hero-sub{
+    font-size:1.25rem;line-height:1.6;max-width:48ch;
+    color:var(--hero-sub);margin:2rem 0 3rem;
+  }
+  .hero-sub strong{color:var(--paper)}
+  .hero-actions{display:flex;gap:1.2rem;flex-wrap:wrap}
+  .btn-primary{
+    background:var(--crimson);color:#fff;
+    padding:1rem 2.2rem;font-family:'Space Mono',monospace;
+    font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;
+    border:none;cursor:pointer;text-decoration:none;
+    border-radius:2px;transition:background 0.2s,transform 0.15s;
+    display:inline-block;
+  }
+  .btn-primary:hover{background:#a01f24;transform:translateY(-1px)}
+  .btn-outline{
+    background:transparent;color:var(--paper);
+    padding:1rem 2.2rem;font-family:'Space Mono',monospace;
+    font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;
+    border:1px solid rgba(245,240,232,0.35);cursor:pointer;text-decoration:none;
+    border-radius:2px;transition:border-color 0.2s,color 0.2s;
+    display:inline-block;
+  }
+  .btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+  .hero-panels{
+    position:absolute;right:-2rem;top:50%;transform:translateY(-50%);
+    display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr 0.6fr;
+    gap:4px;width:min(40vw,480px);height:min(60vh,560px);opacity:0.35;
+  }
+  .panel{background:var(--panel);border:1px solid rgba(200,151,58,0.2)}
+  .panel:nth-child(1){grid-row:span 2}
+  .panel:nth-child(3){grid-column:span 2}
+
+  /* ── NOTICE BAND ── */
+  .notice-band{
+    background:var(--crimson);color:#fff;
+    text-align:center;padding:0.9rem 2rem;
+    font-family:'Space Mono',monospace;font-size:0.78rem;
+    letter-spacing:0.08em;
+  }
+  .notice-band span{opacity:0.75;margin:0 1rem}
+
+  /* ── SECTIONS ── */
+  section{padding:6rem 3rem}
+  .section-label{
+    font-family:'Space Mono',monospace;font-size:0.68rem;
+    letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--gold);display:flex;align-items:center;gap:0.8rem;
+    margin-bottom:1.2rem;
+  }
+  .section-label::before{content:'';display:block;width:2rem;height:1px;background:var(--gold)}
+  h2.section-title{
+    font-family:'Playfair Display',serif;font-weight:700;
+    font-size:clamp(2rem,4vw,3.5rem);line-height:1.1;
+    color:var(--paper);max-width:22ch;margin-bottom:1.5rem;
+  }
+  h2.section-title em{font-style:italic;color:var(--gold)}
+
+  /* ── HOW IT WORKS ── */
+  .how-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:2px;margin-top:4rem;
+    border:1px solid rgba(200,151,58,0.2);
+  }
+  .step{
+    padding:2.5rem 2rem;
+    border-right:1px solid rgba(200,151,58,0.15);
+    position:relative;
+    transition:background 0.2s;
+  }
+  .step:last-child{border-right:none}
+  .step:hover{background:var(--step-hover)}
+  .step-num{
+    font-family:'Playfair Display',serif;font-weight:900;font-style:italic;
+    font-size:4rem;line-height:1;color:rgba(200,151,58,0.2);
+    margin-bottom:1rem;
+  }
+  .step h3{
+    font-family:'Playfair Display',serif;font-weight:700;
+    font-size:1.25rem;color:var(--paper);margin-bottom:0.8rem;
+  }
+  .step p{font-size:0.95rem;line-height:1.65;color:var(--step-text)}
+
+  /* ── WHY QUILL ── */
+  .why-section{background:var(--panel)}
+  .why-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:3rem;
+  }
+  .why-card{
+    padding:2rem 2rem;
+    border:1px solid rgba(200,151,58,0.12);
+  }
+  .why-card .icon{
+    font-size:1.6rem;margin-bottom:1rem;
+    color:var(--gold);
+  }
+  .why-card h3{
+    font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;
+    color:var(--paper);margin-bottom:0.5rem;
+  }
+  .why-card p{font-size:0.95rem;line-height:1.65;color:var(--why-card-text)}
+
+  /* ── PRICING ── */
+  .pricing-section{text-align:center}
+  .pricing-card{
+    display:inline-block;max-width:480px;width:100%;
+    border:2px solid var(--gold);
+    padding:3.5rem 3rem;margin-top:3rem;
+    position:relative;
+  }
+  .pricing-badge{
+    position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+    background:var(--gold);color:var(--ink);
+    font-family:'Space Mono',monospace;font-size:0.65rem;
+    letter-spacing:0.15em;text-transform:uppercase;
+    padding:0.3rem 1.2rem;font-weight:700;
+  }
+  .price{
+    font-family:'Playfair Display',serif;font-weight:900;
+    font-size:5rem;line-height:1;color:var(--gold);
+  }
+  .price sup{font-size:2rem;vertical-align:top;margin-top:0.8rem}
+  .price sub{font-size:1.2rem;color:var(--price-sub)}
+  .pricing-desc{
+    font-size:1rem;color:var(--pricing-desc);
+    margin:1.5rem 0 2rem;line-height:1.65;
+  }
+  .feature-list{list-style:none;text-align:left;margin:2rem 0;border-top:1px solid rgba(200,151,58,0.2);padding-top:2rem}
+  .feature-list li{
+    display:flex;align-items:flex-start;gap:0.8rem;
+    font-size:0.95rem;color:var(--feature-li);
+    padding:0.55rem 0;border-bottom:1px solid rgba(200,151,58,0.1);
+    line-height:1.4;
+  }
+  .feature-list li::before{content:'✦';color:var(--gold);font-size:0.65rem;margin-top:0.15rem;flex-shrink:0}
+
+  /* ── SUBMIT ── */
+  .submit-section{background:var(--panel)}
+  .submit-layout{display:grid;grid-template-columns:1fr 1.6fr;gap:5rem;align-items:start}
+  .submit-info p{
+    font-size:1.05rem;line-height:1.7;
+    color:var(--submit-info-p);margin-bottom:1.2rem;
+  }
+  .requirements{
+    margin-top:2rem;padding:1.5rem;
+    border-left:3px solid var(--crimson);
+    background:rgba(192,39,45,0.08);
+  }
+  .requirements h4{
+    font-family:'Space Mono',monospace;font-size:0.7rem;
+    letter-spacing:0.15em;text-transform:uppercase;
+    color:var(--crimson);margin-bottom:0.8rem;
+  }
+  .requirements ul{
+    list-style:none;font-size:0.9rem;
+    color:var(--req-ul);line-height:2;
+  }
+  .requirements ul li::before{content:'→ ';color:var(--crimson)}
+
+  /* Form */
+  .submit-form{display:flex;flex-direction:column;gap:1.2rem}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+  .field{display:flex;flex-direction:column;gap:0.4rem}
+  label{
+    font-family:'Space Mono',monospace;font-size:0.66rem;
+    letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--label-color);
+  }
+  input,select,textarea{
+    background:var(--input-bg);
+    border:1px solid rgba(200,151,58,0.25);
+    color:var(--paper);padding:0.8rem 1rem;
+    font-family:'EB Garamond',serif;font-size:1rem;
+    border-radius:2px;outline:none;
+    transition:border-color 0.2s,background 0.2s;
+  }
+  input:focus,select:focus,textarea:focus{
+    border-color:var(--gold);
+    background:var(--input-focus);
+  }
+  input::placeholder,textarea::placeholder{color:var(--placeholder)}
+  select option{background:var(--panel);color:var(--paper)}
+  textarea{resize:vertical;min-height:280px;line-height:1.65;font-size:0.98rem}
+  .char-count{
+    font-family:'Space Mono',monospace;font-size:0.65rem;
+    color:var(--char-count);text-align:right;
+    transition:color 0.2s;
+  }
+  .char-count.warn{color:var(--gold)}
+  .char-count.good{color:#5cb85c}
+  .submit-btn{
+    background:var(--crimson);color:#fff;
+    padding:1.1rem 2rem;font-family:'Space Mono',monospace;
+    font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;
+    border:none;cursor:pointer;border-radius:2px;
+    transition:background 0.2s,transform 0.15s;
+    width:100%;
+  }
+  .submit-btn:hover{background:#a01f24;transform:translateY(-1px)}
+  .submit-btn:active{transform:translateY(0)}
+  .form-note{
+    font-size:0.82rem;color:var(--form-note);
+    text-align:center;line-height:1.5;
+  }
+
+  /* Success Message */
+  .success-msg{
+    display:none;background:rgba(92,184,92,0.1);
+    border:1px solid rgba(92,184,92,0.4);
+    padding:1.5rem;border-radius:2px;
+    text-align:center;
+  }
+  .success-msg.show{display:block}
+  .success-msg h3{
+    font-family:'Playfair Display',serif;color:#5cb85c;
+    font-size:1.4rem;margin-bottom:0.5rem;
+  }
+  .success-msg p{color:var(--success-p);font-size:0.95rem}
+
+  /* ── TESTIMONIAL ── */
+  .testimonial-section{
+    text-align:center;padding:5rem 3rem;
+    background:var(--testimonial-bg);
+    border-top:1px solid rgba(200,151,58,0.15);
+    border-bottom:1px solid rgba(200,151,58,0.15);
+  }
+  blockquote{
+    font-family:'Playfair Display',serif;font-style:italic;
+    font-size:clamp(1.5rem,3vw,2.2rem);
+    max-width:28ch;margin:0 auto 1.5rem;
+    color:var(--paper);line-height:1.35;
+  }
+  blockquote::before{content:'"';color:var(--gold);font-size:4rem;line-height:0.5;vertical-align:-1rem;margin-right:0.1em}
+  cite{
+    font-family:'Space Mono',monospace;font-size:0.7rem;
+    letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--muted);
+  }
+
+  /* ── FOOTER ── */
+  footer{
+    background:var(--panel);
+    padding:3rem 3rem 2rem;
+    border-top:1px solid rgba(200,151,58,0.2);
+  }
+  .footer-top{
+    display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:3rem;margin-bottom:3rem;
+    padding-bottom:3rem;
+    border-bottom:1px solid rgba(200,151,58,0.12);
+  }
+  .footer-brand .logo{font-size:1.6rem;display:block;margin-bottom:1rem}
+  .footer-brand p{
+    font-size:0.9rem;color:var(--footer-p);line-height:1.65;max-width:28ch;
+  }
+  footer h4{
+    font-family:'Space Mono',monospace;font-size:0.65rem;
+    letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:1.2rem;
+  }
+  footer ul{list-style:none}
+  footer li{margin-bottom:0.6rem}
+  footer li a{
+    font-size:0.9rem;color:var(--footer-link);
+    text-decoration:none;transition:color 0.2s;
+  }
+  footer li a:hover{color:var(--paper)}
+  .footer-bottom{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--footer-bottom);
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+  .reveal.visible{opacity:1;transform:translateY(0)}
+
+  /* ── STRIPE PAYMENT LINK SETUP BANNER ── */
+  .setup-banner{
+    background:rgba(200,151,58,0.1);border:1px solid rgba(200,151,58,0.4);
+    border-radius:2px;padding:1.2rem 1.4rem;margin-top:1rem;
+    font-size:0.85rem;color:var(--setup-banner-text);line-height:1.7;
+  }
+  .setup-banner strong{color:var(--gold)}
+  .setup-banner code{
+    background:rgba(200,151,58,0.18);padding:0.1rem 0.45rem;
+    border-radius:2px;font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--gold);
+  }
+
+  /* ── THEME TOGGLE ── */
+  .theme-toggle{
+    background:transparent;
+    border:1px solid rgba(200,151,58,0.4);
+    color:var(--paper);
+    cursor:pointer;
+    padding:0.4rem 0.75rem;
+    border-radius:2px;
+    font-family:'Space Mono',monospace;
+    font-size:0.7rem;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    display:flex;align-items:center;gap:0.5rem;
+    transition:border-color 0.2s,color 0.2s,background 0.2s;
+    flex-shrink:0;
+  }
+  .theme-toggle:hover{border-color:var(--gold);color:var(--gold)}
+  .theme-toggle .toggle-icon{font-size:0.9rem}
+
+  /* ── SIGN IN MODAL ── */
+  .signin-modal{
+    position:fixed;inset:0;z-index:250;
+    background:rgba(0,0,0,0.7);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.3s ease;
+    padding:1.5rem;
+  }
+  .signin-modal.open{opacity:1;pointer-events:all}
+  .signin-modal-inner{
+    background:var(--ink);
+    border:1px solid rgba(200,151,58,0.3);
+    border-radius:3px;
+    padding:2.5rem;
+    max-width:400px;width:100%;
+    display:flex;flex-direction:column;gap:1.5rem;
+  }
+  .signin-modal-title{
+    font-family:'Playfair Display',serif;font-weight:700;
+    font-size:1.6rem;color:var(--paper);
+  }
+  .signin-form{display:flex;flex-direction:column;gap:1.2rem}
+  .signin-field{display:flex;flex-direction:column;gap:0.5rem}
+  .signin-field label{
+    font-family:'Space Mono',monospace;font-size:0.66rem;
+    letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--label-color);
+  }
+  .signin-field input{
+    background:var(--input-bg);border:1px solid rgba(200,151,58,0.25);
+    color:var(--paper);padding:0.8rem 1rem;
+    font-family:'EB Garamond',serif;font-size:1rem;
+    border-radius:2px;outline:none;
+    transition:border-color 0.2s,background 0.2s;
+  }
+  .signin-field input:focus{
+    border-color:var(--gold);background:var(--input-focus);
+  }
+  .signin-field input::placeholder{color:var(--placeholder)}
+  .signin-btn{
+    background:var(--crimson);color:#fff;
+    padding:1rem 2rem;font-family:'Space Mono',monospace;
+    font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;
+    border:none;cursor:pointer;border-radius:2px;
+    transition:background 0.2s,transform 0.15s;
+  }
+  .signin-btn:hover{background:#a01f24;transform:translateY(-1px)}
+  .signin-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+  .signin-close{
+    position:absolute;top:1.2rem;right:1.2rem;
+    background:transparent;border:none;color:var(--paper);
+    font-size:1.2rem;cursor:pointer;opacity:0.6;
+    transition:opacity 0.2s;padding:0.2rem;line-height:1;
+  }
+  .signin-close:hover{opacity:1}
+  .signin-message{
+    font-family:'Space Mono',monospace;font-size:0.75rem;
+    letter-spacing:0.08em;color:var(--label-color);text-align:center;line-height:1.6;
+  }
+  .signin-status{
+    padding:0.8rem;border-radius:2px;text-align:center;
+    font-size:0.85rem;font-family:'Space Mono',monospace;
+  }
+  .signin-status.success{
+    background:rgba(92,184,92,0.15);border:1px solid rgba(92,184,92,0.4);color:#5cb85c;
+  }
+  .signin-status.error{
+    background:rgba(192,39,45,0.15);border:1px solid rgba(192,39,45,0.4);color:#ff6b6b;
+  }
+  .signin-resend-btn{
+    background:transparent;border:1px solid rgba(200,151,58,0.3);
+    color:var(--gold);padding:0.5rem 1rem;
+    font-family:'Space Mono',monospace;font-size:0.66rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;transition:border-color 0.2s;
+  }
+  .signin-resend-btn:hover{border-color:var(--gold)}
+  .signin-back-btn{
+    background:transparent;border:none;color:var(--label-color);
+    font-family:'Space Mono',monospace;font-size:0.66rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    cursor:pointer;text-decoration:underline;transition:color 0.2s;
+  }
+  .signin-back-btn:hover{color:var(--paper)}
+  .user-menu{
+    display:flex;align-items:center;gap:1rem;margin-left:1rem;
+  }
+  .user-name{
+    font-family:'Space Mono',monospace;font-size:0.72rem;
+    letter-spacing:0.08em;color:var(--paper);
+  }
+  .sign-out-btn{
+    background:transparent;border:1px solid rgba(200,151,58,0.3);
+    color:var(--paper);padding:0.4rem 0.9rem;
+    font-family:'Space Mono',monospace;font-size:0.66rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;transition:border-color 0.2s,color 0.2s;
+  }
+  .sign-out-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+  /* ── WORKSPACE ── */
+  .workspace-overlay{
+    position:fixed;inset:0;z-index:200;
+    background:var(--ink);
+    display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.3s ease;
+  }
+  .workspace-overlay.open{opacity:1;pointer-events:all}
+
+  .ws-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0.85rem 2rem;
+    background:var(--panel);
+    border-bottom:1px solid rgba(200,151,58,0.2);
+    flex-shrink:0;
+    gap:1rem;
+  }
+  .ws-left{display:flex;align-items:center;gap:1.2rem}
+  .ws-close{
+    background:transparent;border:none;
+    color:var(--paper);cursor:pointer;
+    font-size:1.1rem;opacity:0.6;
+    transition:opacity 0.2s;padding:0.2rem;
+    line-height:1;
+  }
+  .ws-close:hover{opacity:1}
+  .ws-logo{
+    font-family:'Playfair Display',serif;font-weight:900;
+    font-size:1.3rem;letter-spacing:0.15em;
+    color:var(--gold);
+  }
+  .ws-logo span{color:var(--crimson)}
+  .ws-title-input{
+    background:transparent;border:none;border-bottom:1px solid rgba(200,151,58,0.3);
+    color:var(--paper);
+    font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;
+    padding:0.2rem 0.5rem;width:260px;
+    outline:none;
+    transition:border-color 0.2s;
+  }
+  .ws-title-input:focus{border-color:var(--gold)}
+  .ws-title-input::placeholder{color:var(--label-color);font-style:italic;font-weight:400}
+
+  .ws-genre-select{
+    background:transparent;
+    border:none;border-bottom:1px solid rgba(200,151,58,0.3);
+    color:var(--paper);
+    font-family:'Space Mono',monospace;font-size:0.68rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    padding:0.2rem 0.4rem;
+    outline:none;cursor:pointer;
+    transition:border-color 0.2s;
+    appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8973a' opacity='.6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 0.3rem center;
+    padding-right:1.2rem;
+  }
+  .ws-genre-select:focus{border-color:var(--gold)}
+  .ws-genre-select option{background:var(--panel);color:var(--paper);text-transform:none;letter-spacing:0}
+
+  .ws-right{display:flex;align-items:center;gap:1rem}
+  .ws-wordcount{
+    font-family:'Space Mono',monospace;font-size:0.65rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--label-color);
+  }
+  .ws-wordcount.warn{color:var(--gold)}
+  .ws-wordcount.good{color:#5cb85c}
+  .ws-save{
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--label-color);opacity:0;
+    transition:opacity 0.4s;
+  }
+  .ws-save.show{opacity:1}
+
+  .ws-publish-btn{
+    background:var(--crimson);color:#fff;
+    padding:0.55rem 1.4rem;
+    font-family:'Space Mono',monospace;font-size:0.72rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    border:none;cursor:pointer;border-radius:2px;
+    transition:background 0.2s,transform 0.15s;
+    white-space:nowrap;
+  }
+  .ws-publish-btn:hover{background:#a01f24;transform:translateY(-1px)}
+
+  .ws-body{
+    flex:1;display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+  .ws-toolbar{
+    display:flex;align-items:center;gap:0.3rem;
+    padding:0.55rem 2rem;
+    border-bottom:1px solid rgba(200,151,58,0.1);
+    flex-shrink:0;
+    flex-wrap:wrap;
+  }
+  .ws-tool{
+    background:transparent;border:none;
+    color:var(--paper);cursor:pointer;
+    font-family:'Space Mono',monospace;font-size:0.72rem;
+    padding:0.3rem 0.6rem;border-radius:2px;
+    opacity:0.55;transition:opacity 0.2s,background 0.2s;
+    line-height:1;
+  }
+  .ws-tool:hover{opacity:1;background:rgba(200,151,58,0.08)}
+  .ws-tool.bold-btn{font-weight:700}
+  .ws-tool.italic-btn{font-style:italic}
+  .ws-tool-sep{
+    width:1px;height:1.1rem;background:rgba(200,151,58,0.2);
+    margin:0 0.3rem;flex-shrink:0;
+  }
+
+  .ws-editor-wrap{
+    flex:1;overflow-y:auto;
+    padding:3rem max(3rem, calc(50% - 380px));
+  }
+  .ws-editor{
+    width:100%;min-height:100%;
+    background:transparent;border:none;outline:none;resize:none;
+    color:var(--paper);
+    font-family:'EB Garamond',Georgia,serif;
+    font-size:1.2rem;line-height:1.9;
+    caret-color:var(--gold);
+  }
+  .ws-editor::placeholder{color:var(--label-color);font-style:italic}
+
+  /* Submit form manuscript preview */
+  .manuscript-preview{
+    background:var(--input-bg);
+    border:1px solid rgba(200,151,58,0.25);
+    color:var(--paper);padding:0.8rem 1rem;
+    font-family:'EB Garamond',serif;font-size:0.98rem;
+    border-radius:2px;min-height:120px;max-height:260px;
+    overflow-y:auto;line-height:1.65;
+    white-space:pre-wrap;
+  }
+  .manuscript-preview.empty{color:var(--placeholder);font-style:italic}
+  .manuscript-preview-edit{
+    display:inline-flex;align-items:center;gap:0.4rem;
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--gold);cursor:pointer;margin-top:0.4rem;
+    background:transparent;border:none;padding:0;
+    opacity:0.8;transition:opacity 0.2s;
+  }
+  .manuscript-preview-edit:hover{opacity:1}
+
+  .ws-editor:empty:before{
+    content:attr(data-placeholder);
+    color:var(--label-color);font-style:italic;pointer-events:none;
+  }
+  .ws-editor h2{
+    font-family:'Playfair Display',serif;font-size:1.6rem;
+    font-weight:700;color:var(--paper);margin:1.2rem 0 0.5rem;
+  }
+  .ws-editor p{margin-bottom:0.6rem}
+
+  .ws-readtime{
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--label-color);opacity:0;
+    transition:opacity 0.3s;
+  }
+  .ws-readtime.show{opacity:1}
+
+  /* ── COVER DESIGNER MODAL ── */
+  .cover-modal{
+    position:fixed;inset:0;z-index:300;
+    background:rgba(0,0,0,0.85);
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.3s ease;
+    padding:1.5rem;
+  }
+  .cover-modal.open{opacity:1;pointer-events:all}
+  .cover-modal-inner{
+    background:var(--ink);
+    border:1px solid rgba(200,151,58,0.3);
+    width:100%;max-width:860px;
+    max-height:90vh;overflow-y:auto;
+    border-radius:3px;
+    display:flex;flex-direction:column;
+  }
+  .cover-modal-header{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    padding:1.8rem 2rem 1.2rem;
+    border-bottom:1px solid rgba(200,151,58,0.15);
+    flex-shrink:0;
+  }
+  .cover-modal-eyebrow{
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.18em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:0.4rem;
+  }
+  .cover-modal-title{
+    font-family:'Playfair Display',serif;font-weight:700;
+    font-size:1.6rem;color:var(--paper);
+  }
+  .cover-modal-close{
+    background:transparent;border:none;color:var(--paper);
+    font-size:1.1rem;opacity:0.5;cursor:pointer;
+    transition:opacity 0.2s;padding:0.2rem;line-height:1;flex-shrink:0;
+  }
+  .cover-modal-close:hover{opacity:1}
+
+  .cover-designer-body{
+    display:grid;grid-template-columns:1fr 280px;
+    gap:2.5rem;padding:2rem;flex:1;
+  }
+  .cover-controls{display:flex;flex-direction:column;gap:1.6rem}
+  .cover-control-group{}
+  .cover-control-label{
+    font-family:'Space Mono',monospace;font-size:0.63rem;
+    letter-spacing:0.16em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:0.7rem;
+  }
+
+  /* Palette */
+  .palette-grid{display:flex;flex-wrap:wrap;gap:0.5rem}
+  .palette-swatch{
+    width:2.4rem;height:2.4rem;border-radius:3px;
+    border:2px solid transparent;cursor:pointer;
+    transition:transform 0.15s,border-color 0.15s;
+  }
+  .palette-swatch:hover{transform:scale(1.1)}
+  .palette-swatch.active{border-color:var(--gold);transform:scale(1.1)}
+
+  /* Font */
+  .font-options{display:flex;gap:0.5rem;flex-wrap:wrap}
+  .font-opt{
+    background:var(--input-bg);border:1px solid rgba(200,151,58,0.2);
+    color:var(--paper);padding:0.5rem 1rem;font-size:1rem;
+    cursor:pointer;border-radius:2px;transition:border-color 0.15s,background 0.15s;
+  }
+  .font-opt:hover{border-color:rgba(200,151,58,0.5)}
+  .font-opt.active{border-color:var(--gold);background:rgba(200,151,58,0.1)}
+
+  /* Layout */
+  .layout-options{display:flex;gap:0.5rem}
+  .layout-opt{
+    background:var(--input-bg);border:1px solid rgba(200,151,58,0.2);
+    color:var(--paper);padding:0.6rem 0.9rem;
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;
+    display:flex;flex-direction:column;align-items:center;gap:0.4rem;
+    transition:border-color 0.15s,background 0.15s;
+  }
+  .layout-opt:hover{border-color:rgba(200,151,58,0.5)}
+  .layout-opt.active{border-color:var(--gold);background:rgba(200,151,58,0.1)}
+  .layout-thumb{
+    display:flex;flex-direction:column;align-items:center;
+    gap:2px;width:28px;
+  }
+  .layout-thumb span{
+    display:block;height:2px;background:var(--gold);opacity:0.6;
+    width:100%;border-radius:1px;
+  }
+  .layout-thumb.left{align-items:flex-start}
+  .layout-thumb.split span:first-child{width:100%;height:10px;background:rgba(200,151,58,0.25)}
+  .layout-thumb.split span:last-child{width:60%;height:2px}
+
+  /* Motif */
+  .motif-options{display:flex;flex-wrap:wrap;gap:0.5rem}
+  .motif-opt{
+    background:var(--input-bg);border:1px solid rgba(200,151,58,0.2);
+    color:var(--paper);padding:0.4rem 0.8rem;
+    font-size:0.88rem;cursor:pointer;border-radius:2px;
+    transition:border-color 0.15s,background 0.15s;
+  }
+  .motif-opt:hover{border-color:rgba(200,151,58,0.5)}
+  .motif-opt.active{border-color:var(--gold);background:rgba(200,151,58,0.1)}
+
+  /* Tagline input */
+  .cover-tagline-input{
+    width:100%;background:var(--input-bg);
+    border:1px solid rgba(200,151,58,0.25);
+    color:var(--paper);padding:0.7rem 0.9rem;
+    font-family:'EB Garamond',serif;font-size:1rem;
+    border-radius:2px;outline:none;
+    transition:border-color 0.2s;
+  }
+  .cover-tagline-input:focus{border-color:var(--gold)}
+  .cover-tagline-input::placeholder{color:var(--placeholder);font-style:italic}
+
+  /* Preview */
+  .cover-preview-wrap{display:flex;flex-direction:column;align-items:center;gap:0.8rem}
+  .cover-preview-label{
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--gold);align-self:flex-start;
+  }
+  .cover-book{
+    position:relative;
+    filter:drop-shadow(-6px 6px 18px rgba(0,0,0,0.6));
+  }
+  .cover-canvas{
+    display:block;width:210px;height:300px;
+    border-radius:2px 6px 6px 2px;
+  }
+  .cover-preview-hint{
+    font-size:0.78rem;color:var(--label-color);
+    line-height:1.5;text-align:center;max-width:220px;font-style:italic;
+  }
+
+  /* Footer */
+  .cover-modal-footer{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:1.2rem 2rem;
+    border-top:1px solid rgba(200,151,58,0.15);
+    flex-shrink:0;gap:1rem;flex-wrap:wrap;
+  }
+  .cover-skip-btn{
+    background:transparent;border:none;
+    color:var(--label-color);cursor:pointer;
+    font-family:'Space Mono',monospace;font-size:0.66rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    text-decoration:underline;transition:color 0.2s;
+  }
+  .cover-skip-btn:hover{color:var(--paper)}
+  .cover-confirm-btn{
+    background:var(--crimson);color:#fff;
+    padding:0.8rem 1.8rem;
+    font-family:'Space Mono',monospace;font-size:0.75rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    border:none;cursor:pointer;border-radius:2px;
+    transition:background 0.2s,transform 0.15s;
+  }
+  .cover-confirm-btn:hover{background:#a01f24;transform:translateY(-1px)}
+
+  /* Cover preview strip on submit form */
+  .cover-submit-preview{
+    display:none;
+    background:var(--input-bg);border:1px solid rgba(200,151,58,0.25);
+    border-radius:2px;padding:0.9rem 1rem;
+    align-items:center;gap:1rem;margin-bottom:0.5rem;
+  }
+  .cover-submit-preview.show{display:flex}
+  .cover-submit-thumb{width:44px;height:63px;border-radius:1px 3px 3px 1px;flex-shrink:0}
+  .cover-submit-info{flex:1}
+  .cover-submit-info strong{
+    font-family:'Space Mono',monospace;font-size:0.65rem;
+    letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);
+  }
+  .cover-submit-info p{font-size:0.85rem;color:var(--label-color);margin-top:0.2rem}
+  .cover-submit-edit{
+    background:transparent;border:1px solid rgba(200,151,58,0.3);
+    color:var(--paper);padding:0.3rem 0.7rem;
+    font-family:'Space Mono',monospace;font-size:0.6rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;transition:border-color 0.2s;white-space:nowrap;
+  }
+  .cover-submit-edit:hover{border-color:var(--gold)}
+
+  /* ── BOOKSTORE ── */
+  .bookstore-section{background:var(--ink);padding:6rem 3rem}
+  .bookstore-intro{
+    font-size:1.05rem;color:var(--hero-sub);
+    max-width:52ch;margin-bottom:1.5rem;line-height:1.65;
+  }
+  .bookstore-dashboard{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:1rem;margin-bottom:2rem;
+  }
+  .dashboard-growth-card{
+    grid-column:1/-1;
+    background:var(--panel);border:1px solid rgba(255,255,255,0.08);
+    padding:1.5rem;border-radius:4px;
+    display:flex;flex-direction:column;gap:1rem;
+  }
+  .dashboard-chart-wrap{
+    background:var(--canvas);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:4px;
+    padding:1rem;
+  }
+  .dashboard-chart-wrap canvas{
+    display:block;width:100%;height:auto;
+    max-height:280px;
+  }
+  .dashboard-card{
+    background:var(--panel);border:1px solid rgba(255,255,255,0.08);
+    padding:1.5rem;border-radius:4px;
+  }
+  .dashboard-label{
+    font-family:'Space Mono',monospace;font-size:0.7rem;
+    letter-spacing:0.2em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:1rem;
+  }
+  .dashboard-stat-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;
+  }
+  .dashboard-stat{
+    display:flex;flex-direction:column;gap:0.2rem;
+    min-width:0;
+  }
+  .dashboard-number{
+    font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;
+    color:var(--paper);line-height:1;
+    min-width:0;overflow:hidden;text-overflow:ellipsis;
+  }
+  .dashboard-note{
+    font-family:'Space Mono',monospace;font-size:0.72rem;
+    color:var(--hero-sub);line-height:1.4;
+  }
+  .book-card-clicks{
+    font-family:'Space Mono',monospace;font-size:0.7rem;
+    color:var(--price-sub);margin-top:0.45rem;
+  }
+  .bookstore-filters{
+    display:flex;flex-wrap:wrap;gap:0.5rem;
+    margin-bottom:3rem;
+    border-bottom:1px solid rgba(200,151,58,0.15);
+    padding-bottom:1.5rem;
+  }
+  .bs-filter{
+    background:transparent;
+    border:1px solid rgba(200,151,58,0.22);
+    color:var(--paper);
+    padding:0.38rem 0.9rem;
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;
+    opacity:0.6;
+    transition:opacity 0.2s,border-color 0.2s,background 0.2s;
+  }
+  .bs-filter:hover{opacity:1;border-color:rgba(200,151,58,0.5)}
+  .bs-filter.active{
+    opacity:1;border-color:var(--gold);
+    background:rgba(200,151,58,0.1);color:var(--gold);
+  }
+
+  .bookstore-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+    gap:2rem;
+  }
+  .book-card{
+    display:flex;flex-direction:column;gap:0.8rem;
+    cursor:default;
+    animation:bookFadeIn 0.4s ease both;
+  }
+  @keyframes bookFadeIn{
+    from{opacity:0;transform:translateY(16px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  .book-card-cover{
+    position:relative;
+    filter:drop-shadow(-4px 6px 14px rgba(0,0,0,0.55));
+    transition:transform 0.2s,filter 0.2s;
+  }
+  .book-card:hover .book-card-cover{
+    transform:translateY(-4px) rotate(-1deg);
+    filter:drop-shadow(-6px 10px 20px rgba(0,0,0,0.7));
+  }
+  .book-card-cover canvas{
+    display:block;width:100%;height:auto;
+    border-radius:2px 5px 5px 2px;
+  }
+  .book-card-new{
+    position:absolute;top:8px;right:8px;
+    background:var(--crimson);color:#fff;
+    font-family:'Space Mono',monospace;font-size:0.52rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    padding:0.2rem 0.45rem;border-radius:2px;
+  }
+  .book-card-meta{display:flex;flex-direction:column;gap:0.2rem}
+  .book-card-title{
+    font-family:'Playfair Display',serif;font-weight:700;
+    font-size:1rem;color:var(--paper);line-height:1.2;
+  }
+  .book-card-author{
+    font-size:0.82rem;color:var(--label-color);
+    font-style:italic;
+  }
+  .book-card-genre{
+    font-family:'Space Mono',monospace;font-size:0.58rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--gold);opacity:0.8;
+    margin-top:0.1rem;
+  }
+
+  .bookstore-empty{
+    text-align:center;padding:4rem 0;
+    font-size:1rem;color:var(--label-color);font-style:italic;
+  }
+
+  /* ── TAB SYSTEM ── */
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+
+  /* ── NAV LINK BUTTONS ── */
+  nav ul li .nav-link{
+    background:transparent;border:none;cursor:pointer;
+    font-family:'Space Mono',monospace;font-size:0.72rem;
+    letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--paper);opacity:0.65;
+    padding:0.2rem 0;
+    border-bottom:1px solid transparent;
+    transition:opacity 0.2s,border-color 0.2s,color 0.2s;
+  }
+  nav ul li .nav-link:hover{opacity:1}
+  nav ul li .nav-link.active{
+    opacity:1;color:var(--gold);
+    border-bottom-color:var(--gold);
+  }
+
+  /* ── BOOK READ BUTTON ── */
+  .book-read-btn{
+    background:transparent;
+    border:1px solid rgba(200,151,58,0.3);
+    color:var(--gold);
+    padding:0.38rem 0.9rem;
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.12em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;width:100%;
+    transition:background 0.2s,border-color 0.2s,color 0.2s;
+    margin-top:0.2rem;
+  }
+  .book-read-btn:hover{
+    background:rgba(200,151,58,0.1);
+    border-color:var(--gold);color:var(--paper);
+  }
+  .book-delete-btn{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.18);
+    color:var(--paper);
+    padding:0.38rem 0.9rem;
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.12em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;width:100%;
+    transition:background 0.2s,border-color 0.2s,color 0.2s;
+  }
+  .book-delete-btn:hover{
+    background:rgba(255,255,255,0.08);
+    border-color:rgba(255,255,255,0.35);
+  }
+  .book-hide-btn{
+    background:transparent;
+    border:1px solid rgba(245,240,232,0.16);
+    color:var(--paper);
+    padding:0.38rem 0.9rem;
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.12em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;width:100%;
+    transition:background 0.2s,border-color 0.2s,color 0.2s;
+  }
+  .book-hide-btn:hover{
+    background:rgba(245,240,232,0.08);
+    border-color:rgba(245,240,232,0.28);
+  }
+  .undo-toast{
+    position:fixed;right:1.25rem;bottom:1.25rem;z-index:9999;
+    background:var(--panel);color:var(--paper);
+    padding:0.9rem 1rem;border-radius:4px;border:1px solid rgba(255,255,255,0.06);
+    display:flex;gap:0.75rem;align-items:center;min-width:220px;box-shadow:0 6px 18px rgba(0,0,0,0.5);
+    transform:translateY(12px);opacity:0;transition:opacity 0.18s,transform 0.18s;
+  }
+  .undo-toast.visible{opacity:1;transform:translateY(0);} 
+  .undo-toast button{background:transparent;border:1px solid rgba(255,255,255,0.12);color:var(--paper);padding:0.35rem 0.6rem;border-radius:3px;cursor:pointer}
+
+  /* ── READER MODAL ── */
+  .reader-modal{
+    position:fixed;inset:0;z-index:400;
+    background:var(--ink);
+    display:flex;flex-direction:column;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.3s ease;
+  }
+  .reader-modal.open{opacity:1;pointer-events:all}
+
+  .reader-topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0.8rem 2rem;
+    background:var(--panel);
+    border-bottom:1px solid rgba(200,151,58,0.2);
+    flex-shrink:0;gap:1rem;
+  }
+  .reader-meta{display:flex;flex-direction:column;gap:0.1rem;min-width:0}
+  .reader-title-label{
+    font-family:'Playfair Display',serif;font-weight:700;
+    font-size:1rem;color:var(--paper);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .reader-author-label{
+    font-family:'EB Garamond',serif;font-style:italic;
+    font-size:0.85rem;color:var(--label-color);
+  }
+  .reader-page-info{
+    font-family:'Space Mono',monospace;font-size:0.65rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    color:var(--label-color);white-space:nowrap;
+  }
+  .reader-close{
+    background:transparent;border:1px solid rgba(200,151,58,0.25);
+    color:var(--paper);padding:0.4rem 0.9rem;
+    font-family:'Space Mono',monospace;font-size:0.62rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;white-space:nowrap;
+    transition:border-color 0.2s,color 0.2s;flex-shrink:0;
+  }
+  .reader-close:hover{border-color:var(--gold);color:var(--gold)}
+
+  .reader-stage{
+    flex:1;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    padding:2rem;
+  }
+
+  /* Cover page */
+  .reader-cover-page{
+    display:flex;align-items:center;justify-content:center;
+    height:100%;
+    animation:pageFlip 0.35s ease both;
+  }
+  .reader-cover-page canvas{
+    max-height:100%;max-width:100%;
+    border-radius:2px 8px 8px 2px;
+    box-shadow:-8px 8px 30px rgba(0,0,0,0.7);
+  }
+
+  /* Text page */
+  .reader-text-page{
+    background:var(--paper);
+    color:var(--ink);
+    width:100%;max-width:640px;height:100%;max-height:700px;
+    border-radius:2px;
+    box-shadow:-8px 8px 30px rgba(0,0,0,0.6),
+               inset -3px 0 8px rgba(0,0,0,0.08);
+    display:flex;flex-direction:column;
+    padding:3.5rem 3.5rem 2.5rem;
+    position:relative;
+    animation:pageFlip 0.35s ease both;
+    overflow:hidden;
+  }
+  @keyframes pageFlip{
+    from{opacity:0;transform:translateX(24px)}
+    to{opacity:1;transform:translateX(0)}
+  }
+  .reader-text-page.turning-back{
+    animation:pageFlipBack 0.35s ease both;
+  }
+  @keyframes pageFlipBack{
+    from{opacity:0;transform:translateX(-24px)}
+    to{opacity:1;transform:translateX(0)}
+  }
+  .reader-page-number{
+    position:absolute;bottom:1.2rem;
+    left:0;right:0;text-align:center;
+    font-family:'Space Mono',monospace;font-size:0.6rem;
+    letter-spacing:0.1em;
+    color:rgba(10,10,10,0.3);
+  }
+  .reader-chapter-head{
+    font-family:'Playfair Display',serif;font-weight:700;font-style:italic;
+    font-size:1rem;color:rgba(10,10,10,0.35);
+    margin-bottom:2rem;letter-spacing:0.04em;
+    border-bottom:1px solid rgba(10,10,10,0.1);
+    padding-bottom:0.8rem;
+  }
+  .reader-text-content{
+    font-family:'EB Garamond',Georgia,serif;
+    font-size:1.08rem;line-height:1.85;
+    color:#1a1510;
+    flex:1;
+    text-align:justify;
+    hyphens:auto;
+    overflow:hidden;
+  }
+  .reader-text-content p{
+    margin-bottom:0.9rem;
+    text-indent:1.8em;
+  }
+  .reader-text-content p:first-child{text-indent:0}
+  .reader-text-content p:first-child::first-letter{
+    font-family:'Playfair Display',serif;
+    font-size:3.2rem;font-weight:900;
+    float:left;line-height:0.75;
+    margin-right:0.08em;margin-top:0.1em;
+    color:#1a1510;
+  }
+
+  /* Controls */
+  .reader-controls{
+    display:flex;align-items:center;gap:1.5rem;
+    padding:1rem 2rem;
+    border-top:1px solid rgba(200,151,58,0.15);
+    flex-shrink:0;
+    background:var(--panel);
+  }
+  .reader-nav-btn{
+    background:transparent;border:1px solid rgba(200,151,58,0.3);
+    color:var(--paper);padding:0.5rem 1.4rem;
+    font-family:'Space Mono',monospace;font-size:0.68rem;
+    letter-spacing:0.1em;text-transform:uppercase;
+    cursor:pointer;border-radius:2px;white-space:nowrap;
+    transition:background 0.2s,border-color 0.2s;
+  }
+  .reader-nav-btn:hover:not(:disabled){background:rgba(200,151,58,0.1);border-color:var(--gold)}
+  .reader-nav-btn:disabled{opacity:0.25;cursor:default}
+  .reader-progress{
+    flex:1;height:3px;background:rgba(200,151,58,0.15);border-radius:2px;overflow:hidden;
+  }
+  .reader-progress-bar{
+    height:100%;background:var(--gold);border-radius:2px;
+    transition:width 0.3s ease;width:0%;
+  }
+
+  @media(max-width:900px){
+    nav{padding:1rem 1.5rem}
+    nav ul{display:none}
+    .hero{padding:6rem 1.5rem 3rem}
+    .hero-panels{display:none}
+    section{padding:4rem 1.5rem}
+    .submit-layout{grid-template-columns:1fr}
+    .footer-top{grid-template-columns:1fr 1fr;gap:2rem}
+    .why-grid{grid-template-columns:1fr}
+    .form-row{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <button class="logo" onclick="showTab('publish')">QUIL<span>L</span></button>
+  <ul>
+    <li><button class="nav-link active" data-tab="publish" onclick="showTab('publish')">Publish Your Book</button></li>
+    <li><button class="nav-link" data-tab="bookstore" onclick="showTab('bookstore')">Bookstore</button></li>
+    <li class="dashboard-nav-item" style="display:none"><button class="nav-link" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard</button></li>
+    <li><button class="nav-link" data-tab="pricing" onclick="showTab('pricing')">Pricing</button></li>
+    <li><button class="nav-link" data-tab="submit" onclick="showTab('submit')">Submit</button></li>
+    <li><button class="nav-link" data-tab="removed" onclick="showTab('removed')">Removed</button></li>
+    <li><button class="nav-cta" onclick="openWorkspace()">Start Writing</button></li>
+  </ul>
+  <button class="theme-toggle" id="themeToggle" aria-label="Cycle theme">
+    <span class="toggle-icon">☀</span>
+    <span class="toggle-label">Light</span>
+  </button>
+</nav>
+
+<!-- ── TAB: PUBLISH YOUR BOOK ── -->
+<div class="tab-panel active" id="tab-publish">
+
+<!-- ── HERO ── -->
+<section class="hero" id="publish">
+  <div class="hero-eyebrow">AI-Powered Graphic Novel Publishing</div>
+  <h1>Your Story.<br><em>Illustrated.</em><br>Published.</h1>
+  <p class="hero-sub">
+    Write your story — <strong>every word of it</strong> — and our AI engine QUILL transforms your prose into a fully illustrated graphic novel, ready to be bound and shipped to the world.
+  </p>
+  <div class="hero-actions">
+    <button class="btn-primary" onclick="openWorkspace()">Start Writing</button>
+    <button class="btn-outline" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See How It Works ↓</button>
+  </div>
+
+  <div class="hero-panels" aria-hidden="true">
+    <div class="panel"></div>
+    <div class="panel"></div>
+    <div class="panel"></div>
+    <div class="panel"></div>
+    <div class="panel"></div>
+  </div>
+</section>
+
+<!-- ── NOTICE BAND ── -->
+<div class="notice-band">
+  ⚠ Important: We require substantial manuscripts. <strong>Each graphic novel is 50–100 pages.</strong>
+  <span>|</span>
+  Your story must be rich, detailed, and complete.
+  <span>|</span>
+  Minimum 8,000 words recommended.
+</div>
+
+<!-- ── HOW IT WORKS ── -->
+<section id="how">
+  <div class="section-label">The Process</div>
+  <h2 class="section-title">From blank page to bound novel <em>in four steps</em></h2>
+  <div class="how-grid reveal">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Write Your Story</h3>
+      <p>Submit your complete manuscript — your characters, plot, dialogue, and settings. Be thorough. The more detail you give us, the richer your graphic novel will be. We require long-form writing (8,000+ words). This is not a short-story platform.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>QUILL AI Illustrates</h3>
+      <p>Our proprietary QUILL engine reads your prose and intelligently panels it — composing scenes, rendering characters, setting mood and atmosphere — producing 50 to 100 illustrated pages faithful to your vision.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Review in Your Workspace</h3>
+      <p>Your illustrated draft is sent directly to your personal workspace. Review every panel, request revisions, and approve the final layout before we move to print or digital distribution.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <h3>We Publish &amp; Deliver</h3>
+      <p>Choose to keep it private, share it digitally, or let us publish it. We handle formatting, distribution, and delivery — a finished graphic novel shipped right to your door or released online.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHY QUILL ── -->
+<section class="why-section">
+  <div class="section-label">Why Us</div>
+  <h2 class="section-title">A publisher built for <em>serious writers</em></h2>
+  <div class="why-grid reveal">
+    <div class="why-card">
+      <div class="icon">◈</div>
+      <h3>Full-Length Novels Only</h3>
+      <p>We don't do short stories or quick takes. Every project is a proper 50–100 page graphic novel — because great storytelling needs room to breathe. Come with a real manuscript.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">◈</div>
+      <h3>AI That Respects Your Voice</h3>
+      <p>QUILL doesn't rewrite your story. It visualizes it. Your words stay yours; we just give them panels, color, and form.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">◈</div>
+      <h3>Personal Workspace</h3>
+      <p>Every subscriber gets a private workspace to receive drafts, approve pages, leave notes, and track their projects from submission to finished book.</p>
+    </div>
+    <div class="why-card">
+      <div class="icon">◈</div>
+      <h3>Optional Publishing</h3>
+      <p>Publishing is always your choice. Keep your novel private, share the digital edition, or let us distribute it — we send you copies either way.</p>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:4rem">
+    <p style="font-size:1.05rem;color:var(--why-card-text);margin-bottom:1.5rem;max-width:44ch;margin-left:auto;margin-right:auto;line-height:1.65;">
+      Ready to turn your story into a finished graphic novel? One subscription covers everything.
+    </p>
+    <button class="btn-primary" onclick="showTab('pricing')" style="font-size:0.82rem;padding:1.1rem 2.8rem;">
+      Subscribe Now — $30 / month →
+    </button>
+  </div>
+</section>
+
+</div><!-- end tab-publish -->
+
+<!-- ── TAB: PRICING ── -->
+<div class="tab-panel" id="tab-pricing">
+
+<!-- ── PRICING ── -->
+<section class="pricing-section" id="pricing">
+  <div class="section-label" style="justify-content:center">Subscription</div>
+  <h2 class="section-title" style="margin:0 auto;text-align:center">One price. <em>Unlimited stories.</em></h2>
+  <div class="pricing-card reveal">
+    <div class="pricing-badge">Most Popular</div>
+    <div class="price"><sup>$</sup>30<sub>/mo</sub></div>
+    <p class="pricing-desc">
+      Everything you need to write, illustrate, and publish your graphic novels — access your workspace, submit manuscripts, and get your stories into print.
+    </p>
+    <ul class="feature-list">
+      <li>QUILL AI graphic novel conversion (50–100 pages per novel)</li>
+      <li>Personal workspace to review & approve every panel</li>
+      <li>Unlimited manuscript submissions</li>
+      <li>Digital edition of every completed novel</li>
+      <li>Optional publishing & physical copy delivery</li>
+      <li>Priority support from our editorial team</li>
+      <li>Cancel anytime — your work stays yours</li>
+    </ul>
+    <!-- 🔑 REPLACE href with your Stripe Payment Link URL -->
+    <a id="stripePayBtn" href="https://buy.stripe.com/YOUR_PAYMENT_LINK" target="_blank" rel="noopener"
+      class="btn-primary" style="display:block;text-align:center;width:100%;padding:1.1rem;font-family:'Space Mono',monospace;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;border-radius:2px;">
+      Subscribe Now — $30 / month ↗
+    </a>
+    <div class="setup-banner">
+      <strong>⚠ One step to go:</strong> Create your Payment Link in the
+      <strong>Stripe Dashboard → Payment Links → + New</strong>, set it to
+      <strong>$30/month recurring</strong>, then replace <code>YOUR_PAYMENT_LINK</code>
+      in this file's HTML with your link. That's it — real payments, no server needed.
+    </div>
+    <p style="margin-top:1rem;font-size:0.82rem;color:var(--form-note)">
+      Billed monthly. No hidden fees. Cancel anytime.
+    </p>
+  </div>
+</section>
+
+<!-- ── TESTIMONIAL ── -->
+<div class="testimonial-section">
+  <blockquote>I wrote the story for years. QUILL gave it life I never could have drawn myself.</blockquote>
+  <cite>— Marisol V., Quill Author &amp; Subscriber</cite>
+</div>
+
+</div><!-- end tab-pricing -->
+
+<!-- ── TAB: SUBMIT ── -->
+<!-- ── TAB: REMOVED ── -->
+<div class="tab-panel" id="tab-removed">
+  <section class="pricing-section" id="removed">
+    <div class="section-label">Removed</div>
+    <h2 class="section-title">Removed from your bookstore</h2>
+    <p class="bookstore-intro">Books you've removed from your personal view. Restore any with Undo.</p>
+    <div id="removedList" class="bookstore-grid" style="margin-top:2rem;"></div>
+  </section>
+</div>
+
+<div class="tab-panel" id="tab-submit">
+
+<!-- ── SUBMIT ── -->
+<section class="submit-section" id="submit">
+  <div class="section-label">Publish Your Book</div>
+  <h2 class="section-title">Fill in your details and <em>go live.</em></h2>
+
+  <div class="submit-layout">
+    <div class="submit-info">
+      <p>Write your manuscript in the workspace, design your cover, then hit <strong>Publish to Bookstore →</strong> below. Your book appears on the shelf instantly.</p>
+      <p>Every book published through QUILL is available to browse in our public bookstore. You keep full ownership — we just give it a home.</p>
+      <div class="requirements">
+        <h4>⚠ Manuscript Requirements</h4>
+        <ul>
+          <li>Minimum 8,000 words (long-form required)</li>
+          <li>Fully written prose — not outlines or notes</li>
+          <li>Each novel will be 50–100 finished pages</li>
+          <li>Must be an active $30/month subscriber</li>
+          <li>One submission reviewed per queue slot</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <div class="success-msg" id="successMsg">
+        <h3>✦ Your Book is Live!</h3>
+        <p>Your story has been published to the QUILL Bookstore. Scroll down to see it on the shelf — it's right at the top.</p>
+        <a href="#" onclick="showTab('bookstore');return false;" class="btn-primary" style="display:inline-block;margin-top:1.2rem;text-decoration:none;font-size:0.85rem">View in Bookstore →</a>
+      </div>
+
+      <form class="submit-form" id="submitForm" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="field">
+            <label for="fname">First Name</label>
+            <input type="text" id="fname" placeholder="Marguerite" required>
+          </div>
+          <div class="field">
+            <label for="lname">Last Name</label>
+            <input type="text" id="lname" placeholder="Holloway" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label for="title">Story Title</label>
+          <input type="text" id="title" placeholder="The title of your manuscript" required>
+        </div>
+        <div class="field">
+          <label for="genre">Genre</label>
+          <select id="genre" required>
+            <option value="" disabled selected>Select a genre…</option>
+            <option>Science Fiction</option>
+            <option>Fantasy</option>
+            <option>Horror</option>
+            <option>Mystery / Thriller</option>
+            <option>Romance</option>
+            <option>Historical Fiction</option>
+            <option>Literary Fiction</option>
+            <option>Action / Adventure</option>
+            <option>Memoir / Biography</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Your Manuscript</label>
+          <div class="manuscript-preview empty" id="manuscriptPreview">No manuscript yet — open the workspace to write your story.</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.4rem">
+            <button type="button" class="manuscript-preview-edit" id="openWorkspaceFromForm">✦ Open Workspace to Write / Edit</button>
+            <div class="char-count" id="charCount"></div>
+          </div>
+          <input type="hidden" id="manuscript" required>
+        </div>
+        <div class="field">
+          <label for="notes">Notes for Our Team (optional)</label>
+          <input type="text" id="notes" placeholder="Art style preferences, inspirations, special instructions…">
+        </div>
+        <div class="field" style="flex-direction:row;align-items:flex-start;gap:0.8rem">
+          <input type="checkbox" id="subscribed" required style="width:18px;height:18px;margin-top:3px;flex-shrink:0">
+          <label for="subscribed" style="font-size:0.88rem;color:var(--label-color);letter-spacing:0;text-transform:none;line-height:1.5;cursor:pointer">
+            I confirm I am a $30/month Quill subscriber and my manuscript meets the minimum length requirements.
+          </label>
+        </div>
+        <div class="field">
+          <label>Cover Design</label>
+          <div class="cover-submit-preview" id="coverSubmitPreview">
+            <canvas class="cover-submit-thumb" id="coverSubmitThumb" width="44" height="63"></canvas>
+            <div class="cover-submit-info">
+              <strong>Cover designed</strong>
+              <p id="coverSubmitDesc">—</p>
+            </div>
+            <button type="button" class="cover-submit-edit" onclick="openCoverDesigner()">Edit Cover</button>
+          </div>
+          <button type="button" class="manuscript-preview-edit" id="openCoverFromForm" onclick="openCoverDesigner()" style="margin-top:0">✦ Design Your Cover</button>
+        </div>
+        <button type="submit" class="submit-btn">Publish to Bookstore →</button>
+        <p class="form-note">
+          Submissions enter our editorial queue. You'll receive a confirmation email with your workspace link. Publishing is always opt-in — we never release your work without your approval.
+        </p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</div><!-- end tab-submit -->
+
+<!-- ── TAB: BOOKSTORE ── -->
+<div class="tab-panel" id="tab-bookstore">
+
+<!-- ── BOOKSTORE ── -->
+<section class="bookstore-section" id="bookstore">
+  <div class="section-label">The Press</div>
+  <h2 class="section-title">QUILL <em>Bookstore</em></h2>
+  <p class="bookstore-intro">Every novel published through QUILL lives here. Submit yours and it joins the shelf automatically.</p>
+
+  <div class="bookstore-filters" id="bookstoreFilters">
+    <button class="bs-filter active" data-filter="all">All</button>
+    <button class="bs-filter" data-filter="Science Fiction">Sci-Fi</button>
+    <button class="bs-filter" data-filter="Fantasy">Fantasy</button>
+    <button class="bs-filter" data-filter="Horror">Horror</button>
+    <button class="bs-filter" data-filter="Mystery / Thriller">Thriller</button>
+    <button class="bs-filter" data-filter="Romance">Romance</button>
+    <button class="bs-filter" data-filter="Historical Fiction">Historical</button>
+    <button class="bs-filter" data-filter="Literary Fiction">Literary</button>
+    <button class="bs-filter" data-filter="Action / Adventure">Adventure</button>
+  </div>
+
+  <div class="bookstore-grid" id="bookstoreGrid"></div>
+  <div class="bookstore-empty" id="bookstoreEmpty" style="display:none">
+    <p>No books in this genre yet — be the first to publish one.</p>
+  </div>
+</section>
+
+</div><!-- end tab-bookstore -->
+
+<!-- ── TAB: DASHBOARD ── -->
+<div class="tab-panel" id="tab-dashboard">
+  <section class="pricing-section" id="dashboard">
+    <div class="section-label">Analytics</div>
+    <h2 class="section-title">Book performance <em>dashboard</em></h2>
+    <p class="bookstore-intro">Track how many readers have clicked through to your story and see the books that are generating the most interest.</p>
+    <div class="bookstore-dashboard" id="dashboardPanel">
+      <div class="dashboard-growth-card">
+        <div class="dashboard-label">Growth over time</div>
+        <div class="dashboard-chart-wrap">
+          <canvas id="dashboardGrowthChart" width="720" height="260" aria-label="Click growth chart" role="img"></canvas>
+        </div>
+        <div class="dashboard-note">Daily click growth for your published books over the last week.</div>
+      </div>
+      <div class="dashboard-card">
+        <div class="dashboard-label">Book click tracker</div>
+        <div class="dashboard-stat-grid">
+          <div class="dashboard-stat">
+            <div class="dashboard-number" id="dashboardTotalClicks">0</div>
+            <div class="dashboard-note">Total book clicks</div>
+          </div>
+          <div class="dashboard-stat">
+            <div class="dashboard-number" id="dashboardAvgClicks">0</div>
+            <div class="dashboard-note">Avg clicks / book</div>
+          </div>
+          <div class="dashboard-stat">
+            <div class="dashboard-number" id="dashboardTopBook">—</div>
+            <div class="dashboard-note">Top clicked book</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ── WORKSPACE OVERLAY ── -->
+<div class="workspace-overlay" id="workspaceOverlay">
+  <div class="ws-topbar">
+    <div class="ws-left">
+      <button class="ws-close" onclick="closeWorkspace()" title="Back to site">✕</button>
+      <div class="ws-logo">QUIL<span>L</span></div>
+      <input class="ws-title-input" id="wsTitleInput" type="text" placeholder="Untitled Story" maxlength="120">
+      <select class="ws-genre-select" id="wsGenreSelect">
+        <option value="" disabled selected>Genre…</option>
+        <option>Science Fiction</option>
+        <option>Fantasy</option>
+        <option>Horror</option>
+        <option>Mystery / Thriller</option>
+        <option>Romance</option>
+        <option>Historical Fiction</option>
+        <option>Literary Fiction</option>
+        <option>Action / Adventure</option>
+        <option>Memoir / Biography</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="ws-right">
+      <span class="ws-save" id="wsSave">● Saved</span>
+      <span class="ws-wordcount" id="wsWordcount">0 words</span>
+      <span class="ws-readtime" id="wsReadtime"></span>
+      <button class="ws-publish-btn" onclick="publishFromWorkspace()">Publish →</button>
+    </div>
+  </div>
+  <div class="ws-body">
+    <div class="ws-toolbar">
+      <button class="ws-tool bold-btn" title="Bold (Ctrl+B)" onclick="wsFmt('bold')"><b>B</b></button>
+      <button class="ws-tool italic-btn" title="Italic (Ctrl+I)" onclick="wsFmt('italic')"><i>I</i></button>
+      <button class="ws-tool" title="Underline (Ctrl+U)" onclick="wsFmt('underline')"><u>U</u></button>
+      <div class="ws-tool-sep"></div>
+      <button class="ws-tool" title="Heading" onclick="wsFmt('formatBlock','<h2>')">H2</button>
+      <button class="ws-tool" title="Paragraph" onclick="wsFmt('formatBlock','<p>')">¶</button>
+      <div class="ws-tool-sep"></div>
+      <button class="ws-tool" title="Align left" onclick="wsFmt('justifyLeft')">⬱</button>
+      <button class="ws-tool" title="Align center" onclick="wsFmt('justifyCenter')">≡</button>
+      <div class="ws-tool-sep"></div>
+      <button class="ws-tool" title="Undo (Ctrl+Z)" onclick="wsFmt('undo')">↩</button>
+      <button class="ws-tool" title="Redo (Ctrl+Y)" onclick="wsFmt('redo')">↪</button>
+    </div>
+    <div class="ws-editor-wrap">
+      <div class="ws-editor" id="wsEditor" contenteditable="true" spellcheck="true"
+        data-placeholder="Begin your story here…"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── COVER DESIGNER ── -->
+<div class="cover-modal" id="coverModal">
+  <div class="cover-modal-inner">
+
+    <div class="cover-modal-header">
+      <div>
+        <div class="cover-modal-eyebrow">Step 1 of 2</div>
+        <h2 class="cover-modal-title">Design Your Cover</h2>
+      </div>
+      <button class="cover-modal-close" onclick="closeCoverDesigner()" title="Cancel">✕</button>
+    </div>
+
+    <div class="cover-designer-body">
+
+      <!-- LEFT: Controls -->
+      <div class="cover-controls">
+
+        <div class="cover-control-group">
+          <div class="cover-control-label">Colour Palette</div>
+          <div class="palette-grid" id="paletteGrid">
+            <button class="palette-swatch active" data-palette="midnight" style="background:linear-gradient(135deg,#0a0a0a,#1a1230)" title="Midnight"></button>
+            <button class="palette-swatch" data-palette="crimson" style="background:linear-gradient(135deg,#1a0505,#6b0f1a)" title="Crimson"></button>
+            <button class="palette-swatch" data-palette="forest" style="background:linear-gradient(135deg,#0a1a0a,#1a3a1a)" title="Forest"></button>
+            <button class="palette-swatch" data-palette="ocean" style="background:linear-gradient(135deg,#050a1a,#0f2a4a)" title="Ocean"></button>
+            <button class="palette-swatch" data-palette="dusk" style="background:linear-gradient(135deg,#1a0a1a,#3a1a3a)" title="Dusk"></button>
+            <button class="palette-swatch" data-palette="amber" style="background:linear-gradient(135deg,#1a1205,#3a2a05)" title="Amber"></button>
+            <button class="palette-swatch" data-palette="ash" style="background:linear-gradient(135deg,#1a1a1a,#3a3a3a)" title="Ash"></button>
+            <button class="palette-swatch" data-palette="ivory" style="background:linear-gradient(135deg,#f5f0e8,#d8d0c0)" title="Ivory"></button>
+          </div>
+        </div>
+
+        <div class="cover-control-group">
+          <div class="cover-control-label">Title Font</div>
+          <div class="font-options" id="fontOptions">
+            <button class="font-opt active" data-font="playfair" style="font-family:'Playfair Display',serif">Playfair</button>
+            <button class="font-opt" data-font="garamond" style="font-family:'EB Garamond',serif;font-style:italic">Garamond</button>
+            <button class="font-opt" data-font="mono" style="font-family:'Space Mono',monospace;font-size:0.75rem">MONO</button>
+          </div>
+        </div>
+
+        <div class="cover-control-group">
+          <div class="cover-control-label">Layout</div>
+          <div class="layout-options" id="layoutOptions">
+            <button class="layout-opt active" data-layout="centered" title="Centred">
+              <span class="layout-thumb">
+                <span></span><span></span><span></span>
+              </span>
+              Centre
+            </button>
+            <button class="layout-opt" data-layout="topleft" title="Top Left">
+              <span class="layout-thumb left">
+                <span></span><span></span><span></span>
+              </span>
+              Top Left
+            </button>
+            <button class="layout-opt" data-layout="split" title="Split">
+              <span class="layout-thumb split">
+                <span></span><span></span>
+              </span>
+              Split
+            </button>
+          </div>
+        </div>
+
+        <div class="cover-control-group">
+          <div class="cover-control-label">Motif</div>
+          <div class="motif-options" id="motifOptions">
+            <button class="motif-opt active" data-motif="none" title="None">None</button>
+            <button class="motif-opt" data-motif="quill" title="Quill">✒ Quill</button>
+            <button class="motif-opt" data-motif="compass" title="Compass">✦ Star</button>
+            <button class="motif-opt" data-motif="eye" title="Eye">◉ Eye</button>
+            <button class="motif-opt" data-motif="moon" title="Moon">☽ Moon</button>
+            <button class="motif-opt" data-motif="flame" title="Flame">⊛ Flame</button>
+          </div>
+        </div>
+
+        <div class="cover-control-group">
+          <div class="cover-control-label">Subtitle / Tagline <span style="opacity:0.5">(optional)</span></div>
+          <input class="cover-tagline-input" id="coverTaglineInput" type="text" placeholder="A story of shadow and ink…" maxlength="80">
+        </div>
+
+      </div>
+
+      <!-- RIGHT: Preview -->
+      <div class="cover-preview-wrap">
+        <div class="cover-preview-label">Live Preview</div>
+        <div class="cover-book" id="coverBook">
+          <canvas class="cover-canvas" id="coverCanvas" width="280" height="400"></canvas>
+        </div>
+        <div class="cover-preview-hint">This is a preview — final cover art is rendered by QUILL AI after submission.</div>
+      </div>
+
+    </div>
+
+    <div class="cover-modal-footer">
+      <button class="cover-skip-btn" onclick="skipCoverDesigner()">Skip — submit without cover design</button>
+      <button class="cover-confirm-btn" onclick="confirmCoverDesigner()">Use This Cover &amp; Continue →</button>
+    </div>
+
+  </div>
+</div>
+<!-- ── BOOK READER ── -->
+<div class="reader-modal" id="readerModal">
+  <div class="reader-topbar">
+    <div class="reader-meta">
+      <span class="reader-title-label" id="readerTitleLabel"></span>
+      <span class="reader-author-label" id="readerAuthorLabel"></span>
+    </div>
+    <div class="reader-page-info" id="readerPageInfo"></div>
+    <button class="reader-close" onclick="closeReader()" title="Close">✕ Close</button>
+  </div>
+
+  <div class="reader-stage" id="readerStage">
+    <!-- Cover page or text page rendered here -->
+  </div>
+
+  <div class="reader-controls">
+    <button class="reader-nav-btn" id="readerPrev" onclick="readerTurn(-1)">← Previous</button>
+    <div class="reader-progress">
+      <div class="reader-progress-bar" id="readerProgressBar"></div>
+    </div>
+    <button class="reader-nav-btn" id="readerNext" onclick="readerTurn(1)">Next →</button>
+  </div>
+</div>
+
+<script>
+  // ── TAB SYSTEM ──
+  function showTab(tabId){
+    if(tabId === 'dashboard' && typeof userHasPublishedBook === 'function' && !userHasPublishedBook()){
+      tabId = 'publish';
+    }
+
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('tab-' + tabId);
+    if(panel) panel.classList.add('active');
+    const btn = document.querySelector(`.nav-link[data-tab="${tabId}"]`);
+    if(btn) btn.classList.add('active');
+    window.scrollTo({top:0, behavior:'instant'});
+    if(tabId === 'bookstore' && typeof renderBookstore === 'function') renderBookstore();
+    if(tabId === 'dashboard' && typeof drawDashboardGrowthChart === 'function') drawDashboardGrowthChart();
+    if(tabId === 'removed' && typeof renderRemoved === 'function') renderRemoved();
+  }
+
+  // ── THEME TOGGLE ──
+  const themeToggle = document.getElementById('themeToggle');
+  const toggleIcon = themeToggle.querySelector('.toggle-icon');
+  const toggleLabel = themeToggle.querySelector('.toggle-label');
+  const savedTheme = localStorage.getItem('quill-theme') || 'dark';
+  applyTheme(savedTheme);
+
+  function applyTheme(theme){
+    if(theme === 'light'){
+      document.documentElement.setAttribute('data-theme','light');
+      toggleIcon.textContent = '☀';
+      toggleLabel.textContent = 'Light';
+    } else if(theme === 'blue'){
+      document.documentElement.setAttribute('data-theme','blue');
+      toggleIcon.textContent = '💧';
+      toggleLabel.textContent = 'Blue';
+    } else if(theme === 'green'){
+      document.documentElement.setAttribute('data-theme','green');
+      toggleIcon.textContent = '🍃';
+      toggleLabel.textContent = 'Green';
+    } else if(theme === 'red'){
+      document.documentElement.setAttribute('data-theme','red');
+      toggleIcon.textContent = '🔥';
+      toggleLabel.textContent = 'Red';
+    } else if(theme === 'purple'){
+      document.documentElement.setAttribute('data-theme','purple');
+      toggleIcon.textContent = '🔮';
+      toggleLabel.textContent = 'Purple';
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      toggleIcon.textContent = '☾';
+      toggleLabel.textContent = 'Dark';
+    }
+    localStorage.setItem('quill-theme', theme);
+  }
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : current === 'light' ? 'blue' : current === 'blue' ? 'green' : current === 'green' ? 'red' : current === 'red' ? 'purple' : 'dark';
+    applyTheme(next);
+  });
+
+  // ── SCROLL REVEAL ──
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, {threshold:0.15});
+  reveals.forEach(el => obs.observe(el));
+
+  // ── WORKSPACE ──
+  const overlay      = document.getElementById('workspaceOverlay');
+  const wsEditor     = document.getElementById('wsEditor');
+  const wsTitleInput = document.getElementById('wsTitleInput');
+  const wsWordcount  = document.getElementById('wsWordcount');
+  const wsReadtime   = document.getElementById('wsReadtime');
+  const wsSave       = document.getElementById('wsSave');
+  let saveTimer;
+
+  function openWorkspace(){
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => wsEditor.focus(), 120);
+  }
+  function closeWorkspace(){
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('openWorkspaceFromForm').addEventListener('click', openWorkspace);
+
+  document.addEventListener('keydown', e => {
+    if(e.key === 'Escape'){
+      if(document.getElementById('coverModal').classList.contains('open')) closeCoverDesigner();
+      else if(overlay.classList.contains('open')) closeWorkspace();
+    }
+  });
+
+  // Word count + reading time + autosave
+  wsEditor.addEventListener('input', () => {
+    const text = wsEditor.innerText || '';
+    const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+
+    wsWordcount.textContent = words.toLocaleString() + ' word' + (words === 1 ? '' : 's');
+    wsWordcount.className = 'ws-wordcount' + (words === 0 ? '' : words < 8000 ? ' warn' : ' good');
+
+    // reading time (avg 238 wpm for a graphic novel / literary read)
+    if(words > 0){
+      const mins = Math.ceil(words / 238);
+      wsReadtime.textContent = '~' + (mins >= 60
+        ? Math.floor(mins/60) + 'h ' + (mins%60 ? (mins%60) + 'm' : '')
+        : mins + ' min read');
+      wsReadtime.classList.add('show');
+    } else {
+      wsReadtime.classList.remove('show');
+    }
+
+    clearTimeout(saveTimer);
+    wsSave.classList.add('show');
+    saveTimer = setTimeout(() => wsSave.classList.remove('show'), 1800);
+    syncManuscript();
+  });
+
+  wsTitleInput.addEventListener('input', () => {
+    const submitTitle = document.getElementById('title');
+    if(!submitTitle.dataset.manuallyEdited) submitTitle.value = wsTitleInput.value;
+    renderCover();
+  });
+  document.getElementById('title').addEventListener('input', function(){
+    this.dataset.manuallyEdited = '1';
+  });
+
+  const wsGenreSelect = document.getElementById('wsGenreSelect');
+  wsGenreSelect.addEventListener('change', () => {
+    const submitGenre = document.getElementById('genre');
+    if(!submitGenre.dataset.manuallyEdited) submitGenre.value = wsGenreSelect.value;
+  });
+  document.getElementById('genre').addEventListener('change', function(){
+    this.dataset.manuallyEdited = '1';
+  });
+
+  function syncManuscript(){
+    const text = wsEditor.innerText || '';
+    const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    const hidden  = document.getElementById('manuscript');
+    const preview = document.getElementById('manuscriptPreview');
+    const counter = document.getElementById('charCount');
+    if(text.trim() === ''){
+      hidden.value = '';
+      hidden.removeAttribute('value');
+      preview.textContent = 'No manuscript yet — open the workspace to write your story.';
+      preview.classList.add('empty');
+      counter.textContent = '';
+      counter.className = 'char-count';
+    } else {
+      hidden.value = text;
+      const snippet = text.length > 320 ? text.slice(0, 320) + '…' : text;
+      preview.textContent = snippet;
+      preview.classList.remove('empty');
+      counter.textContent = words.toLocaleString() + ' words';
+      counter.className = 'char-count' + (words < 8000 ? ' warn' : ' good');
+    }
+  }
+
+  function wsFmt(cmd, val){
+    wsEditor.focus();
+    document.execCommand(cmd, false, val || null);
+  }
+
+  function publishFromWorkspace(){
+    syncManuscript();
+    closeWorkspace();
+    setTimeout(() => openCoverDesigner(), 250);
+  }
+
+  // ── COVER DESIGNER ──
+  const coverModal = document.getElementById('coverModal');
+
+  // Cover state
+  const cover = {
+    palette: 'midnight',
+    font:    'playfair',
+    layout:  'centered',
+    motif:   'none',
+    tagline: ''
+  };
+
+  const palettes = {
+    midnight: { bg1:'#0a0a0a', bg2:'#1a1230', accent:'#c8973a', text:'#f5f0e8' },
+    crimson:  { bg1:'#1a0505', bg2:'#6b0f1a', accent:'#e8b4a0', text:'#f5f0e8' },
+    forest:   { bg1:'#0a1a0a', bg2:'#1a3a1a', accent:'#7ec87e', text:'#e8f5e8' },
+    ocean:    { bg1:'#050a1a', bg2:'#0f2a4a', accent:'#5ab4d8', text:'#e8f0f8' },
+    dusk:     { bg1:'#1a0a1a', bg2:'#3a1a3a', accent:'#c87ec8', text:'#f5e8f5' },
+    amber:    { bg1:'#1a1205', bg2:'#3a2a05', accent:'#e8c050', text:'#f8f0e0' },
+    ash:      { bg1:'#1a1a1a', bg2:'#3a3a3a', accent:'#a0a0a0', text:'#f0f0f0' },
+    ivory:    { bg1:'#f5f0e8', bg2:'#d8d0c0', accent:'#6b3a1a', text:'#1a1005' }
+  };
+
+  const motifGlyphs = { none:'', quill:'✒', compass:'✦', eye:'◉', moon:'☽', flame:'⊛' };
+  const fontFamilies = {
+    playfair: "'Playfair Display', serif",
+    garamond: "'EB Garamond', serif",
+    mono:     "'Space Mono', monospace"
+  };
+
+  function openCoverDesigner(){
+    renderCover();
+    coverModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCoverDesigner(){
+    coverModal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function skipCoverDesigner(){
+    closeCoverDesigner();
+    goToSubmit();
+  }
+  function confirmCoverDesigner(){
+    // Copy main canvas to thumbnail
+    const mainCanvas = document.getElementById('coverCanvas');
+    const thumb = document.getElementById('coverSubmitThumb');
+    const tCtx = thumb.getContext('2d');
+    tCtx.drawImage(mainCanvas, 0, 0, 44, 63);
+
+    // Show preview strip
+    const strip = document.getElementById('coverSubmitPreview');
+    strip.classList.add('show');
+    document.getElementById('openCoverFromForm').style.display = 'none';
+
+    const pal = palettes[cover.palette];
+    document.getElementById('coverSubmitDesc').textContent =
+      cover.palette.charAt(0).toUpperCase() + cover.palette.slice(1) +
+      ' palette · ' + cover.font.charAt(0).toUpperCase() + cover.font.slice(1) + ' font' +
+      (cover.motif !== 'none' ? ' · ' + cover.motif : '');
+
+    closeCoverDesigner();
+    goToSubmit();
+  }
+
+  function goToSubmit(){
+    showTab('submit');
+  }
+
+  // Render cover to canvas
+  function renderCover(){
+    const canvas = document.getElementById('coverCanvas');
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    const pal = palettes[cover.palette];
+    const title = wsTitleInput.value.trim() || 'Untitled';
+    const tagline = cover.tagline;
+    const motif = motifGlyphs[cover.motif];
+    const layout = cover.layout;
+
+    // Background gradient
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0, pal.bg1);
+    grad.addColorStop(1, pal.bg2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle texture lines
+    ctx.strokeStyle = pal.accent;
+    ctx.globalAlpha = 0.04;
+    ctx.lineWidth = 1;
+    for(let y = 0; y < H; y += 18){
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    // Border frame
+    ctx.strokeStyle = pal.accent;
+    ctx.globalAlpha = 0.35;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(10, 10, W-20, H-20);
+    ctx.globalAlpha = 0.15;
+    ctx.strokeRect(14, 14, W-28, H-28);
+    ctx.globalAlpha = 1;
+
+    // Motif
+    if(motif){
+      ctx.fillStyle = pal.accent;
+      ctx.globalAlpha = layout === 'split' ? 0.18 : 0.12;
+      ctx.font = layout === 'split' ? `${W * 0.7}px serif` : `${W * 0.5}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(motif, W/2, H/2);
+      ctx.globalAlpha = 1;
+    }
+
+    // QUILL publisher line (always top)
+    ctx.fillStyle = pal.accent;
+    ctx.globalAlpha = 0.7;
+    ctx.font = `600 10px 'Space Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('QUILL PRESS', W/2, 22);
+    ctx.globalAlpha = 1;
+
+    // Accent rule
+    ctx.fillStyle = pal.accent;
+    ctx.fillRect(W/2 - 24, 37, 48, 1);
+
+    // Title
+    const fontFamily = fontFamilies[cover.font];
+    ctx.fillStyle = pal.text;
+    ctx.textAlign = layout === 'topleft' ? 'left' : 'center';
+    ctx.textBaseline = 'middle';
+
+    // Break title into lines (max ~14 chars per line)
+    const words2 = title.split(' ');
+    const lines = [];
+    let line = '';
+    for(const w of words2){
+      if((line + ' ' + w).trim().length > 13 && line){
+        lines.push(line.trim()); line = w;
+      } else { line += (line ? ' ' : '') + w; }
+    }
+    if(line) lines.push(line.trim());
+
+    const titleY = layout === 'topleft' ? 70 : layout === 'split' ? H * 0.68 : H * 0.44;
+    const titleX = layout === 'topleft' ? 22 : W/2;
+    const fontSize = lines.length > 2 ? 22 : lines.length > 1 ? 26 : 30;
+    ctx.font = `bold ${fontSize}px ${fontFamily}`;
+    lines.forEach((l, i) => {
+      ctx.fillText(l, titleX, titleY + i * (fontSize + 5));
+    });
+
+    // Tagline
+    if(tagline){
+      ctx.fillStyle = pal.accent;
+      ctx.globalAlpha = 0.85;
+      ctx.font = `italic 11px 'EB Garamond', serif`;
+      ctx.textAlign = layout === 'topleft' ? 'left' : 'center';
+      const tagX = layout === 'topleft' ? 22 : W/2;
+      const tagY = titleY + lines.length * (fontSize + 5) + 14;
+      // wrap tagline
+      const tagWords = tagline.split(' ');
+      let tLine = '', tLines = [];
+      for(const tw of tagWords){
+        if((tLine + ' ' + tw).trim().length > 28 && tLine){ tLines.push(tLine.trim()); tLine = tw; }
+        else { tLine += (tLine ? ' ':'')+tw; }
+      }
+      if(tLine) tLines.push(tLine.trim());
+      tLines.forEach((tl, i) => ctx.fillText(tl, tagX, tagY + i * 15));
+      ctx.globalAlpha = 1;
+    }
+
+    // Author placeholder line at bottom
+    ctx.fillStyle = pal.text;
+    ctx.globalAlpha = 0.4;
+    ctx.font = `11px 'Space Mono', monospace`;
+    ctx.textAlign = 'center';
+    const authorName = document.getElementById('fname').value.trim() + ' ' + document.getElementById('lname').value.trim();
+    ctx.fillText(authorName.trim() || '— your name here —', W/2, H - 24);
+    ctx.globalAlpha = 1;
+  }
+
+  // Wire up controls
+  document.getElementById('paletteGrid').addEventListener('click', e => {
+    const btn = e.target.closest('.palette-swatch');
+    if(!btn) return;
+    document.querySelectorAll('.palette-swatch').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    cover.palette = btn.dataset.palette;
+    renderCover();
+  });
+  document.getElementById('fontOptions').addEventListener('click', e => {
+    const btn = e.target.closest('.font-opt');
+    if(!btn) return;
+    document.querySelectorAll('.font-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    cover.font = btn.dataset.font;
+    renderCover();
+  });
+  document.getElementById('layoutOptions').addEventListener('click', e => {
+    const btn = e.target.closest('.layout-opt');
+    if(!btn) return;
+    document.querySelectorAll('.layout-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    cover.layout = btn.dataset.layout;
+    renderCover();
+  });
+  document.getElementById('motifOptions').addEventListener('click', e => {
+    const btn = e.target.closest('.motif-opt');
+    if(!btn) return;
+    document.querySelectorAll('.motif-opt').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    cover.motif = btn.dataset.motif;
+    renderCover();
+  });
+  document.getElementById('coverTaglineInput').addEventListener('input', e => {
+    cover.tagline = e.target.value;
+    renderCover();
+  });
+
+  // ── BOOKSTORE ──
+  const seedBooks = [
+    {
+      id:'seed-ashen-meridian',
+      title:'The Ashen Meridian', author:'E. Caldwell', genre:'Science Fiction',
+      palette:'ocean', font:'playfair', layout:'centered', motif:'compass', tagline:'Beyond the last star, something waits.', isNew:false
+    },
+    {
+      id:'seed-thorn-sovereign',
+      title:'Thorn & Sovereign', author:'I. Vasquez', genre:'Fantasy',
+      palette:'forest', font:'garamond', layout:'topleft', motif:'moon', tagline:'A crown of roots. A throne of ruin.', isNew:false
+    },
+    {
+      id:'seed-what-dark-keeps',
+      title:'What the Dark Keeps', author:'R. Morrow', genre:'Horror',
+      palette:'crimson', font:'playfair', layout:'split', motif:'eye', tagline:'Some doors should stay shut.', isNew:false
+    },
+    {
+      id:'seed-cartographers-lie',
+      title:'The Cartographer\'s Lie', author:'S. Okafor', genre:'Mystery / Thriller',
+      palette:'ash', font:'mono', layout:'centered', motif:'none', tagline:'Every map hides what it shows.', isNew:false
+    },
+    {
+      id:'seed-letters-from-lethe',
+      title:'Letters from Lethe', author:'A. Fontaine', genre:'Literary Fiction',
+      palette:'amber', font:'garamond', layout:'topleft', motif:'quill', tagline:'', isNew:false
+    },
+    {
+      id:'seed-iron-amaranth',
+      title:'Iron & Amaranth', author:'D. Reyes', genre:'Historical Fiction',
+      palette:'dusk', font:'playfair', layout:'centered', motif:'flame', tagline:'Two empires. One impossible love.', isNew:false
+    }
+  ];
+
+  function loadBookClicks(){
+    const saved = localStorage.getItem('quill-book-clicks');
+    if(!saved) return {};
+    try { return JSON.parse(saved); } catch(e){
+      console.error('Failed to parse book click counts:', e);
+      return {};
+    }
+  }
+
+  function saveBookClicks(){
+    localStorage.setItem('quill-book-clicks', JSON.stringify(bookClicks));
+  }
+
+  function loadClickGrowth(){
+    const saved = localStorage.getItem('quill-book-growth');
+    if(!saved) return {};
+    try { return JSON.parse(saved); } catch(e){
+      console.error('Failed to parse click growth data:', e);
+      return {};
+    }
+  }
+
+  function saveClickGrowth(){
+    localStorage.setItem('quill-book-growth', JSON.stringify(clickGrowth));
+  }
+
+  function recordClickGrowth(){
+    const today = new Date().toISOString().slice(0,10);
+    clickGrowth[today] = (clickGrowth[today] || 0) + 1;
+    saveClickGrowth();
+  }
+
+  function getGrowthSeries(days = 7){
+    const labels = [];
+    const values = [];
+    const today = new Date();
+    for(let i = days - 1; i >= 0; i -= 1){
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+      const key = date.toISOString().slice(0,10);
+      labels.push(date.toLocaleDateString('en-US', {month:'short', day:'numeric'}));
+      values.push(clickGrowth[key] || 0);
+    }
+    return {labels, values};
+  }
+
+  function drawDashboardGrowthChart(){
+    const canvas = document.getElementById('dashboardGrowthChart');
+    if(!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const W = canvas.width;
+    const H = canvas.height;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = '100%';
+    canvas.style.height = 'auto';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const {labels, values} = getGrowthSeries(7);
+    const maxValue = Math.max(...values, 5);
+    const padding = 32;
+    const chartWidth = W - padding * 2;
+    const chartHeight = H - padding * 2;
+    const stepX = chartWidth / (labels.length - 1);
+
+    const paper = getComputedStyle(document.documentElement).getPropertyValue('--paper').trim() || '#fff';
+    const accent = getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#f8c36f';
+    const labelColor = getComputedStyle(document.documentElement).getPropertyValue('--hero-sub').trim() || '#aaa';
+    const axisColor = 'rgba(255,255,255,0.18)';
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    ctx.translate(padding, padding);
+
+    // grid lines
+    ctx.strokeStyle = axisColor;
+    ctx.lineWidth = 1;
+    for(let grid = 0; grid <= 4; grid += 1){
+      const y = chartHeight * grid / 4;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(chartWidth, y);
+      ctx.stroke();
+    }
+
+    // line path
+    const points = values.map((value, index) => {
+      const x = stepX * index;
+      const y = chartHeight - (value / maxValue) * chartHeight;
+      return {x, y};
+    });
+
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    points.slice(1).forEach(pt => ctx.lineTo(pt.x, pt.y));
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // area fill
+    ctx.lineTo(points[points.length - 1].x, chartHeight);
+    ctx.lineTo(points[0].x, chartHeight);
+    ctx.closePath();
+    ctx.fillStyle = accent + '33';
+    ctx.fill();
+
+    // points
+    ctx.fillStyle = paper;
+    points.forEach(pt => {
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // labels
+    ctx.fillStyle = labelColor;
+    ctx.font = '12px Inter, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    labels.forEach((label, index) => {
+      const x = stepX * index;
+      ctx.fillText(label, x, chartHeight + 18);
+    });
+
+    ctx.restore();
+  }
+
+  const bookClicks = loadBookClicks();
+  const clickGrowth = loadClickGrowth();
+
+  // Initialize storeBooks with localStorage, falling back to seedBooks
+  function initializeBooks(){
+    const savedBooks = localStorage.getItem('quill-published-books');
+    if(savedBooks){
+      try {
+        const parsed = JSON.parse(savedBooks);
+        parsed.forEach((book,i) => {
+          if(!book.id){
+            book.id = `saved-${book.title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${i}`;
+          }
+          if(book.isUserCreated === undefined) book.isUserCreated = true;
+          book.clicks = bookClicks[book.id] || 0;
+        });
+        return [...seedBooks.map(book => ({...book, clicks: bookClicks[book.id] || 0})), ...parsed];
+      } catch(e){
+        console.error('Failed to parse saved books:', e);
+        return [...seedBooks.map(book => ({...book, clicks: bookClicks[book.id] || 0}))];
+      }
+    }
+    return [...seedBooks.map(book => ({...book, clicks: bookClicks[book.id] || 0}))];
+  }
+
+  let storeBooks = initializeBooks();
+  let hiddenBookIds = loadHiddenBooks();
+  let activeFilter = 'all';
+
+  // Function to save books to localStorage
+  function savePublishedBooks(){
+    const publishedOnly = storeBooks.filter(book => book.isUserCreated);
+    localStorage.setItem('quill-published-books', JSON.stringify(publishedOnly));
+  }
+
+  function loadHiddenBooks(){
+    const saved = localStorage.getItem('quill-hidden-books');
+    if(!saved) return [];
+    try {
+      return JSON.parse(saved);
+    } catch(e){
+      console.error('Failed to parse hidden books list:', e);
+      return [];
+    }
+  }
+
+  function saveHiddenBooks(){
+    localStorage.setItem('quill-hidden-books', JSON.stringify(hiddenBookIds));
+  }
+
+  // Undo support for hidden books
+  let lastHidden = null;
+  let undoTimer = null;
+
+  function hideBookWithUndo(book){
+    if(!hiddenBookIds.includes(book.id)) hiddenBookIds.push(book.id);
+    saveHiddenBooks();
+    renderBookstore();
+    lastHidden = book.id;
+    showUndoToast(book.title);
+  }
+
+  function showUndoToast(title){
+    const toast = document.getElementById('undoToast');
+    const msg = document.getElementById('undoMsg');
+    const btn = document.getElementById('undoBtn');
+    if(!toast || !msg || !btn) return;
+    msg.textContent = `Removed "${title}" from your bookstore.`;
+    toast.classList.add('visible');
+    // attach handler
+    btn.onclick = () => { undoHidden(); };
+    // clear previous timer
+    if(undoTimer) clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => { clearUndoToast(); }, 6000);
+  }
+
+  function undoHidden(){
+    if(!lastHidden) return;
+    hiddenBookIds = hiddenBookIds.filter(id => id !== lastHidden);
+    saveHiddenBooks();
+    renderBookstore();
+    lastHidden = null;
+    clearUndoToast();
+  }
+
+  function clearUndoToast(){
+    const toast = document.getElementById('undoToast');
+    if(toast) toast.classList.remove('visible');
+    if(undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
+  }
+
+  function drawBookCanvas(canvas, book){
+    const W = canvas.width, H = canvas.height;
+    const ctx = canvas.getContext('2d');
+    const pal = palettes[book.palette] || palettes.midnight;
+    const grad = ctx.createLinearGradient(0,0,W,H);
+    grad.addColorStop(0, pal.bg1);
+    grad.addColorStop(1, pal.bg2);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,W,H);
+
+    // Texture
+    ctx.strokeStyle = pal.accent; ctx.globalAlpha = 0.04; ctx.lineWidth = 1;
+    for(let y=0;y<H;y+=18){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+
+    // Border
+    ctx.strokeStyle = pal.accent;
+    ctx.globalAlpha = 0.35; ctx.lineWidth = 1.5; ctx.strokeRect(8,8,W-16,H-16);
+    ctx.globalAlpha = 0.12; ctx.strokeRect(11,11,W-22,H-22);
+    ctx.globalAlpha = 1;
+
+    // Motif
+    const motifGlyph = motifGlyphs[book.motif] || '';
+    if(motifGlyph){
+      ctx.fillStyle = pal.accent; ctx.globalAlpha = 0.1;
+      ctx.font = `${W*0.55}px serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(motifGlyph, W/2, H/2);
+      ctx.globalAlpha = 1;
+    }
+
+    // Publisher line
+    ctx.fillStyle = pal.accent; ctx.globalAlpha = 0.7;
+    ctx.font = `600 8px 'Space Mono', monospace`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText('QUILL PRESS', W/2, 16);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = pal.accent; ctx.fillRect(W/2-18, 28, 36, 1);
+
+    // Title
+    ctx.fillStyle = pal.text;
+    const fontFam = fontFamilies[book.font] || fontFamilies.playfair;
+    const titleWords = book.title.split(' ');
+    const lines2 = []; let ln = '';
+    for(const w of titleWords){
+      if((ln+' '+w).trim().length > 11 && ln){ lines2.push(ln.trim()); ln=w; }
+      else { ln += (ln?' ':'')+w; }
+    }
+    if(ln) lines2.push(ln.trim());
+    const fs = lines2.length>2 ? 16 : lines2.length>1 ? 19 : 22;
+    ctx.font = `bold ${fs}px ${fontFam}`;
+    ctx.textAlign = book.layout==='topleft'?'left':'center';
+    ctx.textBaseline = 'middle';
+    const tx = book.layout==='topleft' ? 14 : W/2;
+    const ty = book.layout==='split' ? H*0.7 : H*0.44;
+    lines2.forEach((l,i) => ctx.fillText(l, tx, ty+i*(fs+4)));
+
+    // Tagline
+    if(book.tagline){
+      ctx.fillStyle = pal.accent; ctx.globalAlpha = 0.8;
+      ctx.font = `italic 9px 'EB Garamond', serif`;
+      ctx.textAlign = book.layout==='topleft'?'left':'center';
+      const tagX = book.layout==='topleft'?14:W/2;
+      const tagY = ty + lines2.length*(fs+4) + 10;
+      ctx.fillText(book.tagline.length>32 ? book.tagline.slice(0,32)+'…' : book.tagline, tagX, tagY);
+      ctx.globalAlpha = 1;
+    }
+
+    // Author
+    ctx.fillStyle = pal.text; ctx.globalAlpha = 0.4;
+    ctx.font = `9px 'Space Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(book.author, W/2, H-16);
+    ctx.globalAlpha = 1;
+  }
+
+  function renderBookstore(){
+    const grid = document.getElementById('bookstoreGrid');
+    const empty = document.getElementById('bookstoreEmpty');
+    const filtered = activeFilter==='all' ? storeBooks : storeBooks.filter(b=>b.genre===activeFilter);
+    const visibleBooks = filtered.filter(book => !hiddenBookIds.includes(book.id));
+    grid.innerHTML = '';
+    if(visibleBooks.length===0){ empty.style.display='block'; return; }
+    empty.style.display = 'none';
+    visibleBooks.forEach((book, i) => {
+      const card = document.createElement('div');
+      card.className = 'book-card';
+      card.style.animationDelay = (i*0.06)+'s';
+      const coverWrap = document.createElement('div');
+      coverWrap.className = 'book-card-cover';
+      const canvas = document.createElement('canvas');
+      canvas.width = 200; canvas.height = 286;
+      coverWrap.appendChild(canvas);
+      if(book.isNew){
+        const badge = document.createElement('div');
+        badge.className = 'book-card-new'; badge.textContent = 'New';
+        coverWrap.appendChild(badge);
+      }
+      const meta = document.createElement('div');
+      meta.className = 'book-card-meta';
+      meta.innerHTML = `<div class="book-card-title">${book.title}</div>
+        <div class="book-card-author">${book.author}</div>
+        <div class="book-card-genre">${book.genre}</div>`;
+      const readBtn = document.createElement('button');
+      readBtn.className = 'book-read-btn';
+      readBtn.textContent = 'Read →';
+      readBtn.addEventListener('click', () => { trackBookClick(book); openReader(book); });
+      const clicksBadge = document.createElement('div');
+      clicksBadge.className = 'book-card-clicks';
+      clicksBadge.textContent = `${book.clicks || 0} click${book.clicks === 1 ? '' : 's'} on this book`;
+      meta.appendChild(clicksBadge);
+      const actions = document.createElement('div');
+      actions.style.display = 'flex';
+      actions.style.flexDirection = 'column';
+      actions.style.gap = '0.6rem';
+      actions.appendChild(readBtn);
+      const hideBtn = document.createElement('button');
+      hideBtn.className = 'book-hide-btn';
+      hideBtn.textContent = 'Remove from your bookstore';
+      hideBtn.addEventListener('click', () => {
+        if(!confirm(`Remove \"${book.title}\" from your bookstore?`)) return;
+        hideBookWithUndo(book);
+      });
+      actions.appendChild(hideBtn);
+      if(book.isUserCreated){
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'book-delete-btn';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', () => {
+          if(!confirm(`Delete "${book.title}" from your bookstore?`)) return;
+          storeBooks = storeBooks.filter(b => b.id !== book.id);
+          savePublishedBooks();
+          renderBookstore();
+        });
+        actions.appendChild(deleteBtn);
+      }
+      card.appendChild(coverWrap);
+      card.appendChild(meta);
+      card.appendChild(actions);
+      grid.appendChild(card);
+      drawBookCanvas(canvas, book);
+    });
+    updateBookstoreDashboard();
+  }
+
+  function trackBookClick(book){
+    bookClicks[book.id] = (bookClicks[book.id] || 0) + 1;
+    book.clicks = bookClicks[book.id];
+    saveBookClicks();
+    recordClickGrowth();
+    updateBookstoreDashboard();
+  }
+
+  function updateBookstoreDashboard(){
+    const total = Object.values(bookClicks).reduce((sum, value) => sum + value, 0);
+    const booksWithCounts = storeBooks.map(book => ({...book, clicks: bookClicks[book.id] || 0}));
+    const top = booksWithCounts.slice().sort((a,b) => (bookClicks[b.id] || 0) - (bookClicks[a.id] || 0))[0];
+    const avg = booksWithCounts.length ? Math.round(total / booksWithCounts.length) : 0;
+    const topBookLabel = top && (bookClicks[top.id] || 0) > 0 ? `${top.title} (${bookClicks[top.id]})` : 'No clicks yet';
+    const totalEl = document.getElementById('dashboardTotalClicks');
+    const avgEl = document.getElementById('dashboardAvgClicks');
+    const topEl = document.getElementById('dashboardTopBook');
+    if(totalEl) totalEl.textContent = total;
+    if(avgEl) avgEl.textContent = avg;
+    if(topEl) topEl.textContent = topBookLabel;
+    drawDashboardGrowthChart();
+  }
+
+  function userHasPublishedBook(){
+    return storeBooks.some(book => book.isUserCreated);
+  }
+
+  function updateDashboardAccess(){
+    const navItem = document.querySelector('.dashboard-nav-item');
+    if(!navItem) return;
+    if(userHasPublishedBook()){
+      navItem.style.display = '';
+    } else {
+      navItem.style.display = 'none';
+      if(document.querySelector('.tab-panel.active')?.id === 'tab-dashboard'){
+        showTab('publish');
+      }
+    }
+  }
+
+  function undoHiddenById(id){
+    hiddenBookIds = hiddenBookIds.filter(h => h !== id);
+    saveHiddenBooks();
+    if(typeof renderRemoved === 'function') renderRemoved();
+    renderBookstore();
+    if(lastHidden === id) lastHidden = null;
+    clearUndoToast();
+  }
+
+  function renderRemoved(){
+    const container = document.getElementById('removedList');
+    if(!container) return;
+    container.innerHTML = '';
+    const hidden = hiddenBookIds.map(id => storeBooks.find(b => b.id === id)).filter(Boolean);
+    if(hidden.length === 0){
+      container.innerHTML = '<p style="color:var(--label-color);font-style:italic;">You have not removed any books.</p>';
+      return;
+    }
+    hidden.forEach((book, i) => {
+      const card = document.createElement('div');
+      card.className = 'book-card';
+      card.style.animationDelay = (i*0.06)+'s';
+      const coverWrap = document.createElement('div'); coverWrap.className = 'book-card-cover';
+      const canvas = document.createElement('canvas'); canvas.width = 200; canvas.height = 286; coverWrap.appendChild(canvas);
+      const meta = document.createElement('div'); meta.className = 'book-card-meta';
+      meta.innerHTML = `<div class="book-card-title">${book.title}</div><div class="book-card-author">${book.author}</div><div class="book-card-genre">${book.genre}</div>`;
+      const actions = document.createElement('div'); actions.style.display='flex'; actions.style.flexDirection='column'; actions.style.gap='0.6rem';
+      const undoBtn = document.createElement('button'); undoBtn.className='book-hide-btn'; undoBtn.textContent='Undo';
+      undoBtn.addEventListener('click', () => { undoHiddenById(book.id); });
+      actions.appendChild(undoBtn);
+      card.appendChild(coverWrap); card.appendChild(meta); card.appendChild(actions);
+      container.appendChild(card);
+      drawBookCanvas(canvas, book);
+    });
+  }
+
+  // Filter buttons
+  document.getElementById('bookstoreFilters').addEventListener('click', e => {
+    const btn = e.target.closest('.bs-filter');
+    if(!btn) return;
+    document.querySelectorAll('.bs-filter').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderBookstore();
+  });
+
+  // Initial render
+  renderBookstore();
+  updateDashboardAccess();
+
+  // ── FORM SUBMIT ──
+  function handleSubmit(e){
+    e.preventDefault();
+    const text = wsEditor.innerText || '';
+    const words = text.trim()==='' ? 0 : text.trim().split(/\s+/).length;
+    if(words < 500){
+      alert('Your manuscript seems very short. Remember — we require long-form writing (8,000+ words). Open the workspace and add more to your story.');
+      openWorkspace();
+      return;
+    }
+
+    const fname = document.getElementById('fname').value.trim();
+    const lname = document.getElementById('lname').value.trim();
+    const titleVal = document.getElementById('title').value.trim() || 'Untitled';
+    const genreVal = document.getElementById('genre').value || 'Literary Fiction';
+    const authorName = `${fname} ${lname}`.trim() || 'Author';
+
+    // Add to bookstore
+    storeBooks.unshift({
+      id: `book-${Date.now()}-${Math.floor(Math.random()*10000)}`,
+      title: titleVal,
+      author: authorName,
+      ownerEmail: '',
+      ownerName: authorName,
+      genre: genreVal,
+      palette: cover.palette,
+      font: cover.font,
+      layout: cover.layout,
+      motif: cover.motif,
+      tagline: cover.tagline,
+      manuscript: wsEditor.innerText || '',
+      isNew: true,
+      isUserCreated: true
+    });
+
+    // Save to localStorage
+    savePublishedBooks();
+    updateDashboardAccess();
+
+    // Reset filter to all so the new book is visible
+    activeFilter = 'all';
+    document.querySelectorAll('.bs-filter').forEach(b=>b.classList.remove('active'));
+    document.querySelector('.bs-filter[data-filter="all"]').classList.add('active');
+    renderBookstore();
+
+    // Show success briefly then switch to bookstore
+    document.getElementById('submitForm').style.display='none';
+    document.getElementById('successMsg').classList.add('show');
+
+    setTimeout(()=>{
+      showTab('bookstore');
+    }, 2400);
+  }
+
+  // ── BOOK READER ──
+  const WORDS_PER_PAGE = 270;
+  let readerBook = null;
+  let readerPages = [];
+  let readerCurrent = 0;
+  let readerDirection = 1;
+
+  function seedProse(book){
+    const openings = {
+      'Science Fiction': `The last transmission arrived seventeen minutes after the station went dark. No one on the ground understood what it meant — not at first. Commander Yael Orisanwo stood at the observation window, watching the slow rotation of the orbital ring, and felt the particular cold that comes not from temperature but from knowing something has changed and can never be unchanged.\n\nThe message was six words. Six words and a set of coordinates that placed the origin point somewhere beyond the heliopause, in a region of space that every chart marked simply as unmapped.\n\n"Do you want me to run it again?" asked Brinev, her navigator, from the console behind her. His voice was careful in the way voices get careful when the speaker is more frightened than they want to admit.\n\n"No," she said. "I heard it."\n\nShe had heard it. She would always hear it now — those six words playing on a loop in the back of her mind, beneath every conversation, behind every order she gave, under every moment of the long journey that was about to begin. Six words that should have been impossible. Six words that meant the universe was larger and stranger and older than anyone had calculated.\n\nShe turned from the window.\n\n"Plot the course," she said.\n\nBrinev looked up. "You're certain?"\n\n"Plot it."\n\nThe station hummed around them. Outside, stars. Beyond the stars, whatever had sent the message.\n\n"How long?" she asked.\n\n"At full burn?" Brinev did the calculation. "Eleven months. Give or take a week for deceleration."\n\nEleven months. Long enough for doubt to set in. Long enough for fear to become something manageable — or something monstrous, depending on the person.\n\n"Prepare the crew," she said. "We leave at 0400."`,
+      'Fantasy': `The city of Vorn had seventeen gates and no king — a fact that had caused more wars than anyone cared to count. The current argument concerned the Eastern Gate specifically, which had been closed for three years on the orders of the Merchant Council, and which had, three nights ago, opened itself.\n\nNo lock had been broken. No bar had been lifted. The gate had simply swung wide at the third hour of the night, admitting a wind that smelled of pine resin and old iron, and behind the wind, a woman who gave her name as Sable and her occupation as none of your business.\n\nShe was brought before the Council at dawn.\n\nThey were eleven merchants of varying degrees of wealth and matching degrees of self-importance. They arranged themselves behind a long table of polished dark wood and looked at her the way that powerful people look at complications: with irritation carefully disguised as composure.\n\n"The gate," said the eldest merchant, a woman named Corvath whose fingers were heavy with rings, "has been sealed by the strongest warding magic available in this city. Magic that has held for three years against everything. And yet."\n\n"And yet," Sable agreed.\n\n"You will explain how you passed it."\n\n"I won't, actually."\n\nThe silence that followed this was the particular quality of silence that precedes either arrest or negotiation. Sable had learned to wait it out.\n\nCorvath studied her for a long moment. Then, slowly, the old merchant smiled.\n\n"You're the one they call the Lockless," she said.\n\n"Some do."\n\n"We have a problem," said Corvath, "that requires someone with your particular skills."`,
+      'Horror': `The house had been empty for eleven years when we bought it. The realtor mentioned this in the same tone she used to mention the new roof and the updated plumbing — as a feature, almost. Eleven years of quiet. Eleven years of stillness.\n\nMy wife Clara fell in love with it immediately. The high ceilings, the long windows, the wide pine floors that creaked in a pattern that almost sounded, if you listened wrong, like footsteps.\n\nWe moved in on a Saturday in October. The light already thin and gold, the leaves already dying, the air carrying that particular autumn smell of endings.\n\nThe first night, I heard the door at the end of the upstairs hall open and close.\n\nI told myself it was the house settling. Old houses settle — everyone says this. I told myself this and went back to sleep and woke in the morning to find Clara already downstairs making coffee, humming to herself, and for a moment everything was fine.\n\nThen I noticed the door at the end of the upstairs hall was open.\n\nI had closed it the night before. I remembered closing it. I had put my hand on the old ceramic knob and pulled it shut and heard the latch catch.\n\nI went upstairs and looked inside.`,
+      'Mystery / Thriller': `The body was found at 6:14 on a Tuesday morning by a woman walking her dog along the canal path. She called 999, waited, and when the officers arrived she was still standing exactly where she'd been — not because she was in shock, she explained, but because she didn't want to leave him alone.\n\nThe victim was male, mid-forties, well dressed. No wallet. No phone. No identification of any kind. He lay face-up on the towpath with his arms at his sides and his eyes closed. Someone had done that — pressed his eyelids shut with something that might have been care, or ceremony.\n\n"Anything?" Detective Inspector Mara Fenn asked.\n\n"Nothing obvious. No signs of a struggle. No visible injuries." A pause. "Except his hands."\n\nFenn crouched down. The man's hands were clean — recently washed. And on each palm, drawn in what looked like ink, a single symbol. The same symbol, mirrored.\n\nShe had been a detective for fourteen years. She had learned to be careful about the word never.\n\nBut she had never seen anything like this.\n\n"Get me forensics," she said. "And find out who owns every building along this stretch."`,
+      'Literary Fiction': `My grandmother kept a jar of buttons on the windowsill of her kitchen — hundreds of them, collected over decades from coats and shirts and dresses belonging to people she had known and in some cases outlived.\n\nWhen I was small I would sit at her table and she would pour them out and we would sort them together, and she would tell me where each one had come from.\n\nThis one from your grandfather's good coat. This one from a dress I had when I was seventeen, a green dress, I wore it to a dance and met a boy whose name I can't remember now but whose face I still see sometimes when I'm almost asleep.\n\nI thought about those buttons when they told me she had died. All that accumulated memory, all those small preserved fragments of lives half-forgotten, and how when she went they would become just buttons again — objects drained of significance, waiting to mean something to someone else.\n\nI drove up to her house alone. Not telling my mother, who would have wanted to come. Not telling my husband, who would have been kind in a way I wasn't ready for.\n\nThe jar was still on the windowsill.\n\nI sat down at her table and stayed there for a long time.`,
+      'default': `The town of Aldwell sits at the bottom of a valley so steep that for six weeks in winter the sun does not reach it. This is not a metaphor, though it has often been treated as one by people who have never lived there.\n\nI came back in the spring of the year my father died, intending to stay for a week and settling, without quite meaning to, for something much longer. The house needed work — it always had — and there was the matter of his things, which no one else was going to deal with.\n\nThe town was smaller than I remembered. The population had declined by roughly a third in the twenty years I'd been away, the mill having closed and taken with it a particular kind of life: the rhythms, the certainties, the shared understanding of how things work.\n\nWhat remained was quieter. More itself, somehow. The valley in spring was extraordinary — green in a way that green only is when it follows a long absence, every field and hedgerow almost aggressively alive.\n\nI unlocked the front door of my father's house and stepped into the smell of him. Dust and pipe tobacco and something underneath both that I recognized without being able to name.\n\nI put my bag down in the hall and stood there for a while.\n\nThen I went into the kitchen and put the kettle on, because that is what you do.`
+    };
+    return openings[book.genre] || openings['default'];
+  }
+
+  function buildPages(book){
+    const text = book.manuscript || seedProse(book);
+    const words = text.trim().split(/\s+/);
+    const pages = [];
+    for(let i = 0; i < words.length; i += WORDS_PER_PAGE){
+      pages.push(words.slice(i, i + WORDS_PER_PAGE).join(' '));
+    }
+    return pages;
+  }
+
+  function openReader(book){
+    readerBook = book;
+    readerPages = buildPages(book);
+    readerCurrent = 0;
+    readerDirection = 1;
+    document.getElementById('readerTitleLabel').textContent = book.title;
+    document.getElementById('readerAuthorLabel').textContent = book.author;
+    renderReaderPage();
+    document.getElementById('readerModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeReader(){
+    document.getElementById('readerModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function readerTurn(dir){
+    const newPage = readerCurrent + dir;
+    if(newPage < 0 || newPage > readerPages.length) return;
+    readerDirection = dir;
+    readerCurrent = newPage;
+    renderReaderPage();
+  }
+
+  function renderReaderPage(){
+    const stage = document.getElementById('readerStage');
+    const total = readerPages.length;
+    const pageNum = readerCurrent;
+
+    document.getElementById('readerPageInfo').textContent =
+      pageNum === 0 ? 'Cover' : `Page ${pageNum} of ${total}`;
+
+    const pct = total > 0 ? (pageNum / total) * 100 : 0;
+    document.getElementById('readerProgressBar').style.width = pct + '%';
+
+    document.getElementById('readerPrev').disabled = pageNum === 0;
+    document.getElementById('readerNext').disabled = pageNum === total;
+
+    stage.innerHTML = '';
+
+    if(pageNum === 0){
+      const wrap = document.createElement('div');
+      wrap.className = 'reader-cover-page';
+      const canvas = document.createElement('canvas');
+      canvas.width = 420; canvas.height = 600;
+      wrap.appendChild(canvas);
+      stage.appendChild(wrap);
+      drawBookCanvas(canvas, readerBook);
+    } else {
+      const page = document.createElement('div');
+      page.className = 'reader-text-page' + (readerDirection < 0 ? ' turning-back' : '');
+
+      if(pageNum === 1){
+        const ch = document.createElement('div');
+        ch.className = 'reader-chapter-head';
+        ch.textContent = readerBook.title;
+        page.appendChild(ch);
+      }
+
+      const content = document.createElement('div');
+      content.className = 'reader-text-content';
+      const chunk = readerPages[pageNum - 1];
+      const rawParas = chunk.split(/\n\n+/).filter(p => p.trim());
+      const paras = rawParas.length > 1 ? rawParas : (() => {
+        const sentences = chunk.match(/[^.!?]+[.!?]+["']?\s*/g) || [chunk];
+        const perPara = Math.max(1, Math.ceil(sentences.length / 3));
+        const groups = [];
+        for(let i = 0; i < sentences.length; i += perPara)
+          groups.push(sentences.slice(i, i + perPara).join('').trim());
+        return groups;
+      })();
+
+      paras.forEach(p => {
+        if(!p.trim()) return;
+        const el = document.createElement('p');
+        el.textContent = p.trim();
+        content.appendChild(el);
+      });
+
+      page.appendChild(content);
+
+      const pn = document.createElement('div');
+      pn.className = 'reader-page-number';
+      pn.textContent = pageNum;
+      page.appendChild(pn);
+
+      stage.appendChild(page);
+    }
+  }
+
+  // Keyboard navigation in reader
+  document.addEventListener('keydown', e => {
+    if(!document.getElementById('readerModal').classList.contains('open')) return;
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown') readerTurn(1);
+    if(e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   readerTurn(-1);
+    if(e.key === 'Escape') closeReader();
+  });
+
+  // Sign-in and dashboard logic removed.
+
+</script>
+  <!-- Undo toast -->
+  <div id="undoToast" class="undo-toast" role="status" aria-live="polite">
+    <span id="undoMsg">Removed</span>
+    <button id="undoBtn">Undo</button>
+  </div>
+</body>
+</html>
